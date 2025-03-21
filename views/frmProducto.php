@@ -1,64 +1,51 @@
-<?php
-include_once '../controllers/CtrProducto.php';
-$ctrProducto = new CtrProducto();
-$productos = $ctrProducto->obtenerProductos();
-?>
+<?php include_once('header.php'); ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestionar Productos</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
-</head>
-<body>
-    <div class="container">
-        <!-- Formulario para agregar nuevo producto -->
-        <h2>Agregar Producto</h2>
-        <form method="post" action="../controllers/CrearProducto.php">
-            <label for="codigo">Código:</label>
-            <input type="text" id="codigo" name="codigo" required><br>
+<div class="container">
+    <h2>Gestionar Productos</h2>
 
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" name="nombre" required><br>
+    <!-- Formulario de creación o edición de Producto -->
+    <form method="post" action="index.php?action=<?php echo isset($producto) ? 'producto_update&id='.$producto['id'] : 'producto_store'; ?>">
+        <label for="codigo">Código</label>
+        <input type="text" name="codigo" value="<?php echo isset($producto) ? $producto['codigo'] : ''; ?>" required>
 
-            <label for="precio">Precio:</label>
-            <input type="number" id="precio" name="precio" step="0.01" required><br>
+        <label for="nombre">Nombre</label>
+        <input type="text" name="nombre" value="<?php echo isset($producto) ? $producto['nombre'] : ''; ?>" required>
 
-            <label for="stock">Stock:</label>
-            <input type="number" id="stock" name="stock" required><br>
+        <label for="stock">Stock</label>
+        <input type="number" name="stock" value="<?php echo isset($producto) ? $producto['stock'] : ''; ?>" required>
 
-            <input type="submit" value="Crear Producto">
-        </form>
+        <label for="valor_unitario">Valor Unitario</label>
+        <input type="number" name="valor_unitario" value="<?php echo isset($producto) ? $producto['valor_unitario'] : ''; ?>" step="0.01" required>
 
-        <!-- Lista de productos -->
-        <h2>Productos Existentes</h2>
-        <table>
+        <input type="submit" value="<?php echo isset($producto) ? 'Actualizar Producto' : 'Guardar Producto'; ?>">
+    </form>
+
+    <!-- Tabla de productos -->
+    <table>
+        <thead>
             <tr>
                 <th>Código</th>
                 <th>Nombre</th>
-                <th>Precio</th>
                 <th>Stock</th>
+                <th>Valor Unitario</th>
                 <th>Acciones</th>
             </tr>
+        </thead>
+        <tbody>
             <?php foreach ($productos as $producto): ?>
             <tr>
                 <td><?php echo $producto['codigo']; ?></td>
                 <td><?php echo $producto['nombre']; ?></td>
-                <td><?php echo $producto['precio']; ?></td>
                 <td><?php echo $producto['stock']; ?></td>
+                <td><?php echo $producto['valor_unitario']; ?></td>
                 <td>
-                    <a href="editarProducto.php?id=<?php echo $producto['id']; ?>">Editar</a> |
-                    <a href="../controllers/eliminarProducto.php?id=<?php echo $producto['id']; ?>">Eliminar</a>
+                    <a href="index.php?action=producto_edit&id=<?php echo $producto['id']; ?>" class="edit">Editar</a>
+                    <a href="index.php?action=producto_delete&id=<?php echo $producto['id']; ?>" class="delete">Eliminar</a>
                 </td>
             </tr>
             <?php endforeach; ?>
-        </table>
-    </div>
+        </tbody>
+    </table>
+</div>
 
-    <footer>
-        <p>&copy; 2025 Sistema de Facturación</p>
-    </footer>
-</body>
-</html>
+<?php include_once('footer.php'); ?>

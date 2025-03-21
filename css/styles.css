@@ -1,0 +1,151 @@
+/* Resetear algunos estilos predeterminados */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f7f7f7;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+}
+
+/* Contenedor principal */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Encabezado */
+header {
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+/* Formularios */
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+input[type="text"], input[type="number"], input[type="email"], input[type="date"], select {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+}
+
+input[type="submit"], button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+input[type="submit"]:hover, button:hover {
+    background-color: #45a049;
+}
+
+/* Tablas */
+table {
+    width: 100%;
+    margin-top: 30px;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background-color: #f4f4f4;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+table td a {
+    text-decoration: none;
+    color: #007BFF;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+table td a:hover {
+    background-color: #e6e6e6;
+}
+
+/* Estilos para las tablas de acción */
+table td a.delete {
+    color: #ff6f61;
+}
+
+table td a.delete:hover {
+    background-color: #f7c6c4;
+}
+
+table td a.edit {
+    color: #4CAF50;
+}
+
+table td a.edit:hover {
+    background-color: #c7f3c2;
+}
+
+/* Diseño del pie de página */
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    margin-top: 50px;
+    border-radius: 8px;
+}
+
+/* Estilo de contenedor de botones y formularios */
+button, input[type="submit"] {
+    width: 100%;
+    max-width: 200px;
+    margin-top: 10px;
+}
+
+/* Sección de Contenido */
+section {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

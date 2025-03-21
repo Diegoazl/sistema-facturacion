@@ -1,75 +1,67 @@
 <?php
-class Producto{
-    private $conn;
-    private $table = "productos";
+require_once 'config/database.php';
 
-    public $id;
-    public $codigo;
-    public $nombre;
-    public $precio;
-    public $stock;
+class Producto {
 
-    public function __construct(){
-        $this->conn = (new Database())->getConnection();
+    private $id;
+    private $codigo;
+    private $nombre;
+    private $stock;
+    private $valor_unitario;
+
+    public function __construct($codigo = "", $nombre = "", $stock = 0, $valor_unitario = 0.0) {
+        $this->codigo = $codigo;
+        $this->nombre = $nombre;
+        $this->stock = $stock;
+        $this->valor_unitario = $valor_unitario;
     }
 
-    // Crear un nuevo producto
-    public function crearProducto(){
-        $query = "INSERT INTO " . $this->table . " SET codigo=:codigo, nombre=:nombre, precio=:precio, stock=:stock";
-        $stmt = $this->conn->prepare($query);
-
-        $stmt->bindParam(':codigo', $this->codigo);
-        $stmt->bindParam(':nombre', $this->nombre);
-        $stmt->bindParam(':precio', $this->precio);
-        $stmt->bindParam(':stock', $this->stock);
-
-        if($stmt->execute()){
-            return true;
-        }
-        return false;
+    public function save() {
+        global $pdo;
+        $sql = "INSERT INTO productos (codigo, nombre, stock, valor_unitario) VALUES (:codigo, :nombre, :stock, :valor_unitario)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':codigo' => $this->codigo,
+            ':nombre' => $this->nombre,
+            ':stock' => $this->stock,
+            ':valor_unitario' => $this->valor_unitario
+        ]);
     }
 
-    // Obtener producto por ID
-    public function obtenerProductoPorId(){
-        $query = "SELECT * FROM " . $this->table . " WHERE id = :id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id', $this->id);
+    public static function getAll() {
+        global $pdo;
+        $sql = "SELECT * FROM productos";
+        $stmt = $pdo->prepare($sql);
         $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        $this->codigo = $row['codigo'];
-        $this->nombre = $row['nombre'];
-        $this->precio = $row['precio'];
-        $this->stock = $row['stock'];
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Editar un producto existente
-    public function editarProducto(){
-        $query = "UPDATE " . $this->table . " SET codigo=:codigo, nombre=:nombre, precio=:precio, stock=:stock WHERE id=:id";
-        $stmt = $this->conn->prepare($query);
-
-        $stmt->bindParam(':codigo', $this->codigo);
-        $stmt->bindParam(':nombre', $this->nombre);
-        $stmt->bindParam(':precio', $this->precio);
-        $stmt->bindParam(':stock', $this->stock);
-        $stmt->bindParam(':id', $this->id);
-
-        if($stmt->execute()){
-            return true;
-        }
-        return false;
+    public static function getById($id) {
+        global $pdo;
+        $sql = "SELECT * FROM productos WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Eliminar un producto
-    public function eliminarProducto(){
-        $query = "DELETE FROM " . $this->table . " WHERE id = :id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id', $this->id);
+    public function update() {
+        global $pdo;
+        $sql = "UPDATE productos SET codigo = :codigo, nombre = :nombre, stock = :stock, valor_unitario = :valor_unitario WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':codigo' => $this->codigo,
+            ':nombre' => $this->nombre,
+            ':stock' => $this->stock,
+            ':valor_unitario' => $this->valor_unitario,
+            ':id' => $this->id
+        ]);
+    }
 
-        if($stmt->execute()){
-            return true;
-        }
-        return false;
+    public static function delete($id) {
+        global $pdo;
+        $sql = "DELETE FROM productos WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':id' => $id]);
     }
 }
 ?>

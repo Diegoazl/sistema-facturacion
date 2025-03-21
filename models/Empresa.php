@@ -1,22 +1,60 @@
 <?php
+require_once 'config/database.php';
+
 class Empresa {
+
     private $id;
     private $codigo;
     private $nombre;
 
-    public function __construct($id, $codigo, $nombre) {
-        $this->id = $id;
+    public function __construct($codigo = "", $nombre = "") {
         $this->codigo = $codigo;
         $this->nombre = $nombre;
     }
 
-    // Métodos getter y setter
-    public function getId() { return $this->id; }
-    public function getCodigo() { return $this->codigo; }
-    public function getNombre() { return $this->nombre; }
+    public function save() {
+        global $pdo;
+        $sql = "INSERT INTO empresas (codigo, nombre) 
+                VALUES (:codigo, :nombre)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':codigo' => $this->codigo,
+            ':nombre' => $this->nombre
+        ]);
+    }
 
-    public function setId($id) { $this->id = $id; }
-    public function setCodigo($codigo) { $this->codigo = $codigo; }
-    public function setNombre($nombre) { $this->nombre = $nombre; }
+    public static function getAll() {
+        global $pdo;
+        $sql = "SELECT * FROM empresas";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function getById($id) {
+        global $pdo;
+        $sql = "SELECT * FROM empresas WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function update() {
+        global $pdo;
+        $sql = "UPDATE empresas SET codigo = :codigo, nombre = :nombre WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':codigo' => $this->codigo,
+            ':nombre' => $this->nombre,
+            ':id' => $this->id
+        ]);
+    }
+
+    public static function delete($id) {
+        global $pdo;
+        $sql = "DELETE FROM empresas WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':id' => $id]);
+    }
 }
 ?>

@@ -1,72 +1,66 @@
-<?php
-include_once '../controllers/CtrVendedor.php';
-$ctrVendedor = new CtrVendedor();
-$vendedores = $ctrVendedor->obtenerVendedores();
-?>
+<?php include_once('header.php'); ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestionar Vendedores</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
-</head>
-<body>
-    <div class="container">
-        <!-- Formulario para agregar nuevo vendedor -->
-        <h2>Agregar Vendedor</h2>
-        <form method="post" action="../controllers/CrearVendedor.php">
-            <label for="codigo">Código:</label>
-            <input type="text" id="codigo" name="codigo" required><br>
+<h2>Gestionar Vendedores</h2>
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required><br>
+<!-- Formulario de creación o edición de Vendedor -->
+<form method="post" action="index.php?action=<?php echo isset($vendedor) ? 'vendedor_update&id='.$vendedor['id'] : 'vendedor_store'; ?>">
+    <label for="codigo">Código</label>
+    <input type="text" name="codigo" value="<?php echo isset($vendedor) ? $vendedor['codigo'] : ''; ?>" required>
 
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" name="nombre" required><br>
+    <label for="email">Email</label>
+    <input type="email" name="email" value="<?php echo isset($vendedor) ? $vendedor['email'] : ''; ?>" required>
 
-            <label for="telefono">Teléfono:</label>
-            <input type="text" id="telefono" name="telefono" required><br>
+    <label for="nombre">Nombre</label>
+    <input type="text" name="nombre" value="<?php echo isset($vendedor) ? $vendedor['nombre'] : ''; ?>" required>
 
-            <label for="carne">Carné:</label>
-            <input type="text" id="carne" name="carne" required><br>
+    <label for="telefono">Teléfono</label>
+    <input type="text" name="telefono" value="<?php echo isset($vendedor) ? $vendedor['telefono'] : ''; ?>" required>
 
-            <label for="direccion">Dirección:</label>
-            <input type="text" id="direccion" name="direccion" required><br>
+    <label for="tipo">Tipo</label>
+    <select name="tipo" required>
+        <option value="vendedor" <?php echo isset($vendedor) && $vendedor['tipo'] == 'vendedor' ? 'selected' : ''; ?>>Vendedor</option>
+    </select>
 
-            <input type="submit" value="Agregar Vendedor">
-        </form>
+    <label for="carnet">Carnet</label>
+    <input type="text" name="carnet" value="<?php echo isset($vendedor) ? $vendedor['carnet'] : ''; ?>" required>
 
-        <!-- Lista de vendedores -->
-        <h2>Vendedores Existentes</h2>
-        <table>
-            <tr>
-                <th>Código</th>
-                <th>Email</th>
-                <th>Nombre</th>
-                <th>Teléfono</th>
-                <th>Carné</th>
-                <th>Acciones</th>
-            </tr>
-            <?php foreach ($vendedores as $vendedor): ?>
-            <tr>
-                <td><?php echo $vendedor['codigo']; ?></td>
-                <td><?php echo $vendedor['email']; ?></td>
-                <td><?php echo $vendedor['nombre']; ?></td>
-                <td><?php echo $vendedor['telefono']; ?></td>
-                <td><?php echo $vendedor['carne']; ?></td>
-                <td>
-                    <a href="editarVendedor.php?id=<?php echo $vendedor['id']; ?>">Editar</a> |
-                    <a href="../controllers/eliminarVendedor.php?id=<?php echo $vendedor['id']; ?>">Eliminar</a>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </table>
-    </div>
+    <label for="direccion">Dirección</label>
+    <input type="text" name="direccion" value="<?php echo isset($vendedor) ? $vendedor['direccion'] : ''; ?>" required>
 
-    <footer>
-        <p>&copy; 2025 Sistema de Facturación</p>
-    </footer>
-</body>
-</html>
+    <label for="empresa_id">Empresa ID</label>
+    <input type="number" name="empresa_id" value="<?php echo isset($vendedor) ? $vendedor['empresa_id'] : ''; ?>" required>
+
+    <label for="tipo_persona">Tipo Persona</label>
+    <input type="text" name="tipo_persona" value="<?php echo isset($vendedor) ? $vendedor['tipo_persona'] : ''; ?>" required>
+
+    <input type="submit" value="<?php echo isset($vendedor) ? 'Actualizar Vendedor' : 'Guardar Vendedor'; ?>">
+</form>
+
+<!-- Tabla de vendedores -->
+<table>
+    <thead>
+        <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($vendedores as $vendedor): ?>
+        <tr>
+            <td><?php echo $vendedor['codigo']; ?></td>
+            <td><?php echo $vendedor['nombre']; ?></td>
+            <td><?php echo $vendedor['email']; ?></td>
+            <td><?php echo $vendedor['telefono']; ?></td>
+            <td>
+                <a href="index.php?action=vendedor_edit&id=<?php echo $vendedor['id']; ?>">Editar</a>
+                <a href="index.php?action=vendedor_delete&id=<?php echo $vendedor['id']; ?>">Eliminar</a>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+
+<?php include_once('footer.php'); ?>
