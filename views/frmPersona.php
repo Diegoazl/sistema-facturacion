@@ -1,5 +1,5 @@
 <?php
-// Incluimos el controlador para obtener las personas
+// Incluir el controlador para obtener las personas
 include_once '../controllers/CtrPersona.php';
 $ctrPersona = new CtrPersona();
 $personas = $ctrPersona->obtenerPersonas();
@@ -65,8 +65,9 @@ $personas = $ctrPersona->obtenerPersonas();
         <td><?php echo $persona['telefono']; ?></td>
         <td><?php echo $persona['tipo']; ?></td>
         <td>
-            <a href="editarPersona.php?id=<?php echo $persona['id']; ?>">Editar</a> |
-            <a href="eliminarPersona.php?id=<?php echo $persona['id']; ?>">Eliminar</a>
+            <!-- Correcta ruta a los controladores -->
+            <a href="../controllers/editarPersona.php?id=<?php echo $persona['id']; ?>">Editar</a> |
+            <a href="../controllers/eliminarPersona.php?id=<?php echo $persona['id']; ?>">Eliminar</a>
         </td>
     </tr>
     <?php endforeach; ?>
