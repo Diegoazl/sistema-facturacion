@@ -1,21 +1,28 @@
-<?php include_once('header.php'); ?>
-
+<!-- frmEmpresa.php -->
 <div class="container">
-    <h2>Gestionar Empresas</h2>
+    <h2>Gestión de Empresas</h2>
 
-    <!-- Formulario de creación o edición de Empresa -->
-    <form method="post" action="index.php?action=<?php echo isset($empresa) ? 'empresa_update&id='.$empresa['id'] : 'empresa_store'; ?>">
-        <label for="codigo">Código</label>
-        <input type="text" name="codigo" value="<?php echo isset($empresa) ? $empresa['codigo'] : ''; ?>" required>
+    <!-- Formulario para crear o editar empresa -->
+    <h3><?= isset($empresa) ? 'Editar Empresa' : 'Agregar Nueva Empresa' ?></h3>
+    <form method="POST" action="index.php?action=<?= isset($empresa) ? 'storeOrUpdate&id=' . $empresa['id'] : 'storeOrUpdate' ?>">
+        <div class="form-group">
+            <label for="codigo">Código:</label>
+            <input type="text" id="codigo" name="codigo" class="form-control" value="<?= isset($empresa) ? $empresa['codigo'] : '' ?>" required>
+        </div>
 
-        <label for="nombre">Nombre</label>
-        <input type="text" name="nombre" value="<?php echo isset($empresa) ? $empresa['nombre'] : ''; ?>" required>
+        <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" class="form-control" value="<?= isset($empresa) ? $empresa['nombre'] : '' ?>" required>
+        </div>
 
-        <input type="submit" value="<?php echo isset($empresa) ? 'Actualizar Empresa' : 'Guardar Empresa'; ?>">
+        <button type="submit" class="btn btn-primary"><?= isset($empresa) ? 'Actualizar Empresa' : 'Guardar Empresa' ?></button>
     </form>
 
-    <!-- Tabla de empresas -->
-    <table>
+    <hr>
+
+    <!-- Tabla de empresas existentes -->
+    <h3>Empresas Registradas</h3>
+    <table class="table">
         <thead>
             <tr>
                 <th>Código</th>
@@ -26,16 +33,14 @@
         <tbody>
             <?php foreach ($empresas as $empresa): ?>
             <tr>
-                <td><?php echo $empresa['codigo']; ?></td>
-                <td><?php echo $empresa['nombre']; ?></td>
+                <td><?= $empresa['codigo'] ?></td>
+                <td><?= $empresa['nombre'] ?></td>
                 <td>
-                    <a href="index.php?action=empresa_edit&id=<?php echo $empresa['id']; ?>" class="edit">Editar</a>
-                    <a href="index.php?action=empresa_delete&id=<?php echo $empresa['id']; ?>" class="delete">Eliminar</a>
+                    <a href="index.php?action=empresa_edit&id=<?= $empresa['id'] ?>" class="btn btn-info">Editar</a>
+                    <a href="index.php?action=empresa_delete&id=<?= $empresa['id'] ?>" class="btn btn-danger" onclick="return confirm('¿Seguro que deseas eliminar esta empresa?')">Eliminar</a>
                 </td>
             </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
 </div>
-
-<?php include_once('footer.php'); ?>

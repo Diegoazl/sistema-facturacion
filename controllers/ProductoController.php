@@ -1,51 +1,60 @@
 <?php
-require_once 'models/Producto.php';
+class Producto {
+    private $pdo;
 
-class ProductoController {
-
-    // Mostrar todos los productos
-    public function index() {
-        $productos = Producto::getAll();
-        require_once 'views/frmProducto.php';
+    public function __construct($pdo) {
+        $this->pdo = $pdo;
     }
 
-    // Guardar un nuevo producto
-    public function store() {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $producto = new Producto($_POST['codigo'], $_POST['nombre'], $_POST['stock'], $_POST['valor_unitario']);
-            $producto->save();
-            header("Location: index.php?action=producto_index");
-        }
+    // Crear un producto
+    public function crearProducto($codigo, $nombre, $stock, $valor_unitario) {
+        $sql = "INSERT INTO productos (codigo, nombre, stock, valor_unitario) 
+                VALUES (:codigo, :nombre, :stock, :valor_unitario)";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            ':codigo' => $codigo,
+            ':nombre' => $nombre,
+            ':stock' => $stock,
+            ':valor_unitario' => $valor_unitario
+        ]);
     }
 
-    // Editar un producto
-    public function edit($id) {
-        $producto = Producto::getById($id);
-        require_once 'views/frmProducto.php';
+    // Obtener todos los productos
+    public function obtenerProductos() {
+        $sql = "SELECT * FROM productos";
+        $stmt = $this->pdo->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Actualizar producto
-    public function update($id) {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $producto = new Producto($_POST['codigo'], $_POST['nombre'], $_POST['stock'], $_POST['valor_unitario']);
-            $producto->update($id);
-            header("Location: index.php?action=producto_index");
-        }
+    // Obtener producto por ID
+    public function obtenerProductoPorId($id) {
+        $sql = "SELECT * FROM productos WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // Actualizar un producto
+    public function actualizarProducto($id, $codigo, $nombre, $stock, $valor_unitario) {
+        $sql = "UPDATE productos SET codigo = :codigo, nombre = :nombre, stock = :stock, valor_unitario = :valor_unitario 
+                WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            ':id' => $id,
+            ':codigo' => $codigo,
+            ':nombre' => $nombre,
+            ':stock' => $stock,
+            ':valor_unitario' => $valor_unitario
+        ]);
     }
 
     // Eliminar un producto
-    public function delete($id) {
-        Producto::delete($id);
-        header("Location: index.php?action=producto_index");
-    }
-
-    // Buscar productos
-    public function search() {
-        $productos = [];
-        if (isset($_POST['search_query'])) {
-            $productos = Producto::search($_POST['search_query']);
-        }
-        require_once 'views/frmProducto.php';
+    public function eliminarProducto($id) {
+        $sql = "DELETE FROM productos WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':id' => $id]);
     }
 }
 ?>
+
+

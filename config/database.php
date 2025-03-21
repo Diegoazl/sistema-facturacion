@@ -1,17 +1,17 @@
 <?php
-// Parámetros de conexión a la base de datos
-$host = 'localhost'; // Cambia por tu host si es necesario
-$dbname = 'sistema_facturacion'; // Nombre de tu base de datos
-$username = 'root'; // Usuario de la base de datos
-$password = ''; // Contraseña de la base de datos (dejar vacío para localhost por defecto)
+// database.php
 
-// Crear la conexión
+// Cambiar para usar variables de entorno o un archivo de configuración
+$host = getenv('DB_HOST') ?: 'localhost'; // Si no está en las variables de entorno, se usa localhost
+$dbname = getenv('DB_NAME') ?: 'sistema_facturacion';
+$username = getenv('DB_USER') ?: 'root';
+$password = getenv('DB_PASS') ?: '';
+
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Modo de errores
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Mejorar el manejo de errores
 } catch (PDOException $e) {
     echo "Error de conexión: " . $e->getMessage();
     exit;
 }
 ?>
-

@@ -1,86 +1,58 @@
 <?php
-require_once 'config/database.php';
-
 class Factura {
+    private $pdo;
 
-    private $id;
-    private $fecha;
-    private $numero;
-    private $total;
-    private $cliente_id;
-    private $vendedor_id;
-
-    public function __construct($fecha = "", $numero = "", $total = 0.0, $cliente_id = 0, $vendedor_id = 0) {
-        $this->fecha = $fecha;
-        $this->numero = $numero;
-        $this->total = $total;
-        $this->cliente_id = $cliente_id;
-        $this->vendedor_id = $vendedor_id;
+    public function __construct($pdo) {
+        $this->pdo = $pdo;
     }
 
-    // Guardar factura
-    public function save() {
-        global $pdo;
-        $sql = "INSERT INTO facturas (fecha, numero, total, cliente_id, vendedor_id) 
-                VALUES (:fecha, :numero, :total, :cliente_id, :vendedor_id)";
-        $stmt = $pdo->prepare($sql);
+    // Crear una factura
+    public function crearFactura($numero, $cliente_id, $vendedor_id, $total) {
+        $sql = "INSERT INTO facturas (numero, cliente_id, vendedor_id, total) 
+                VALUES (:numero, :cliente_id, :vendedor_id, :total)";
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
-            ':fecha' => $this->fecha,
-            ':numero' => $this->numero,
-            ':total' => $this->total,
-            ':cliente_id' => $this->cliente_id,
-            ':vendedor_id' => $this->vendedor_id
+            ':numero' => $numero,
+            ':cliente_id' => $cliente_id,
+            ':vendedor_id' => $vendedor_id,
+            ':total' => $total
         ]);
     }
 
     // Obtener todas las facturas
-    public static function getAll() {
-        global $pdo;
+    public function obtenerFacturas() {
         $sql = "SELECT * FROM facturas";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute();
+        $stmt = $this->pdo->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Obtener una factura por su ID
-    public static function getById($id) {
-        global $pdo;
+    // Obtener factura por ID
+    public function obtenerFacturaPorId($id) {
         $sql = "SELECT * FROM facturas WHERE id = :id";
-        $stmt = $pdo->prepare($sql);
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Actualizar factura
-    public function update($id) {
-        global $pdo;
-        $sql = "UPDATE facturas SET fecha = :fecha, numero = :numero, total = :total, cliente_id = :cliente_id, vendedor_id = :vendedor_id WHERE id = :id";
-        $stmt = $pdo->prepare($sql);
+    // Actualizar una factura
+    public function actualizarFactura($id, $numero, $cliente_id, $vendedor_id, $total) {
+        $sql = "UPDATE facturas SET numero = :numero, cliente_id = :cliente_id, vendedor_id = :vendedor_id, total = :total 
+                WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
-            ':fecha' => $this->fecha,
-            ':numero' => $this->numero,
-            ':total' => $this->total,
-            ':cliente_id' => $this->cliente_id,
-            ':vendedor_id' => $this->vendedor_id,
-            ':id' => $id
+            ':id' => $id,
+            ':numero' => $numero,
+            ':cliente_id' => $cliente_id,
+            ':vendedor_id' => $vendedor_id,
+            ':total' => $total
         ]);
     }
 
-    // Eliminar factura
-    public static function delete($id) {
-        global $pdo;
+    // Eliminar una factura
+    public function eliminarFactura($id) {
         $sql = "DELETE FROM facturas WHERE id = :id";
-        $stmt = $pdo->prepare($sql);
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':id' => $id]);
-    }
-
-    // Buscar factura por número o cliente
-    public static function search($query) {
-        global $pdo;
-        $sql = "SELECT * FROM facturas WHERE numero LIKE :query OR cliente_id LIKE :query";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([':query' => '%' . $query . '%']);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 ?>

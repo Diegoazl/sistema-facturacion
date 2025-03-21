@@ -2,50 +2,68 @@
 require_once 'models/Cliente.php';
 
 class ClienteController {
+    private $clienteModel;
+
+    public function __construct($pdo) {
+        $this->clienteModel = new Cliente($pdo);
+    }
 
     // Mostrar todos los clientes
-    public function index() {
-        $clientes = Cliente::getAll();
-        require_once 'views/frmCliente.php';
+    public function mostrar() {
+        $clientes = $this->clienteModel->obtenerClientes();
+        include 'views/frmCliente.php'; // Mostrar la vista con la lista de clientes
     }
 
-    // Guardar un nuevo cliente
-    public function store() {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $cliente = new Cliente($_POST['codigo'], $_POST['email'], $_POST['nombre'], $_POST['telefono'], $_POST['tipo'], $_POST['carnet'], $_POST['direccion'], $_POST['credito'], $_POST['empresa_id'], $_POST['tipo_persona']);
-            $cliente->save();
-            header("Location: index.php?action=cliente_index");
+    // Crear un cliente
+    public function crear() {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            // Validar datos de entrada
+            if (empty($_POST['codigo']) || empty($_POST['nombre']) || empty($_POST['email'])) {
+                echo "Todos los campos son obligatorios.";
+                return;
+            }
+
+            $codigo = $_POST['codigo'];
+            $nombre = $_POST['nombre'];
+            $email = $_POST['email'];
+            $telefono = $_POST['telefono'];
+            $tipo = $_POST['tipo'];
+
+            // Llamar al modelo para crear el cliente
+            $this->clienteModel->crearCliente($codigo, $nombre, $email, $telefono, $tipo);
+            header("Location: index.php?action=mostrarClientes"); // Redirigir a la lista de clientes
         }
+        include 'views/frmCliente.php'; // Mostrar la vista de creación de cliente
     }
 
-    // Editar un cliente
-    public function edit($id) {
-        $cliente = Cliente::getById($id);
-        require_once 'views/frmCliente.php';
-    }
+    // Editar cliente
+    public function editar($id) {
+        $cliente = $this->clienteModel->obtenerClientePorId($id);
 
-    // Actualizar cliente
-    public function update($id) {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $cliente = new Cliente($_POST['codigo'], $_POST['email'], $_POST['nombre'], $_POST['telefono'], $_POST['tipo'], $_POST['carnet'], $_POST['direccion'], $_POST['credito'], $_POST['empresa_id'], $_POST['tipo_persona']);
-            $cliente->update($id);
-            header("Location: index.php?action=cliente_index");
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            // Validar datos de entrada
+            if (empty($_POST['codigo']) || empty($_POST['nombre']) || empty($_POST['email'])) {
+                echo "Todos los campos son obligatorios.";
+                return;
+            }
+
+            $codigo = $_POST['codigo'];
+            $nombre = $_POST['nombre'];
+            $email = $_POST['email'];
+            $telefono = $_POST['telefono'];
+            $tipo = $_POST['tipo'];
+
+            // Llamar al modelo para actualizar el cliente
+            $this->clienteModel->actualizarCliente($id, $codigo, $nombre, $email, $telefono, $tipo);
+            header("Location: index.php?action=mostrarClientes"); // Redirigir después de actualizar
         }
+        include 'views/frmCliente.php'; // Mostrar la vista de edición de cliente
     }
 
-    // Eliminar un cliente
-    public function delete($id) {
-        Cliente::delete($id);
-        header("Location: index.php?action=cliente_index");
-    }
-
-    // Buscar clientes
-    public function search() {
-        $clientes = [];
-        if (isset($_POST['search_query'])) {
-            $clientes = Cliente::search($_POST['search_query']);
-        }
-        require_once 'views/frmCliente.php';
+    // Eliminar cliente
+    public function eliminar($id) {
+        $this->clienteModel->eliminarCliente($id);
+        header("Location: index.php?action=mostrarClientes"); // Redirigir después de eliminar
     }
 }
 ?>

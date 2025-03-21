@@ -1,59 +1,48 @@
 <?php
-require_once 'config/database.php';
-
 class ProductosPorFactura {
+    private $pdo;
 
-    private $id;
-    private $factura_id;
-    private $producto_id;
-    private $cantidad;
-    private $subtotal;
-
-    public function __construct($factura_id = 0, $producto_id = 0, $cantidad = 0, $subtotal = 0.0) {
-        $this->factura_id = $factura_id;
-        $this->producto_id = $producto_id;
-        $this->cantidad = $cantidad;
-        $this->subtotal = $subtotal;
+    public function __construct($pdo) {
+        $this->pdo = $pdo;
     }
 
-    // Guardar productos en una factura
-    public function save() {
-        global $pdo;
+    // Agregar producto a una factura
+    public function agregarProductoAFactura($factura_id, $producto_id, $cantidad, $subtotal) {
         $sql = "INSERT INTO productos_por_factura (factura_id, producto_id, cantidad, subtotal) 
                 VALUES (:factura_id, :producto_id, :cantidad, :subtotal)";
-        $stmt = $pdo->prepare($sql);
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
-            ':factura_id' => $this->factura_id,
-            ':producto_id' => $this->producto_id,
-            ':cantidad' => $this->cantidad,
-            ':subtotal' => $this->subtotal
+            ':factura_id' => $factura_id,
+            ':producto_id' => $producto_id,
+            ':cantidad' => $cantidad,
+            ':subtotal' => $subtotal
         ]);
     }
 
-    // Obtener todos los productos por factura
-    public static function getByFacturaId($factura_id) {
-        global $pdo;
+    // Obtener productos de una factura
+    public function obtenerProductosPorFactura($factura_id) {
         $sql = "SELECT * FROM productos_por_factura WHERE factura_id = :factura_id";
-        $stmt = $pdo->prepare($sql);
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':factura_id' => $factura_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Eliminar productos de una factura
-    public static function delete($id) {
-        global $pdo;
+    // Actualizar la cantidad de un producto en una factura
+    public function actualizarCantidad($id, $cantidad, $subtotal) {
+        $sql = "UPDATE productos_por_factura SET cantidad = :cantidad, subtotal = :subtotal WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            ':id' => $id,
+            ':cantidad' => $cantidad,
+            ':subtotal' => $subtotal
+        ]);
+    }
+
+    // Eliminar producto de una factura
+    public function eliminarProductoDeFactura($id) {
         $sql = "DELETE FROM productos_por_factura WHERE id = :id";
-        $stmt = $pdo->prepare($sql);
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':id' => $id]);
-    }
-
-    // Buscar productos por factura
-    public static function searchByFactura($factura_id) {
-        global $pdo;
-        $sql = "SELECT * FROM productos_por_factura WHERE factura_id = :factura_id";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([':factura_id' => $factura_id]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 ?>

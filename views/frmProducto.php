@@ -1,34 +1,38 @@
-<?php include_once('header.php'); ?>
-
+<!-- frmProducto.php -->
 <div class="container">
-    <h2>Gestionar Productos</h2>
+    <h2>Gestión de Productos</h2>
 
-    <!-- Formulario de búsqueda -->
-    <form method="post" action="index.php?action=producto_search">
-        <label for="search_query">Buscar Producto</label>
-        <input type="text" name="search_query" placeholder="Buscar por código o nombre">
-        <input type="submit" value="Buscar">
+    <!-- Formulario para agregar o editar producto -->
+    <h3><?= isset($producto) ? 'Editar Producto' : 'Agregar Nuevo Producto' ?></h3>
+    <form method="POST" action="index.php?action=<?= isset($producto) ? 'editarProducto&id=' . $producto['id'] : 'crearProducto' ?>">
+        <div class="form-group">
+            <label for="codigo">Código:</label>
+            <input type="text" id="codigo" name="codigo" class="form-control" value="<?= isset($producto) ? $producto['codigo'] : '' ?>" required>
+        </div>
+
+        <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" class="form-control" value="<?= isset($producto) ? $producto['nombre'] : '' ?>" required>
+        </div>
+
+        <div class="form-group">
+            <label for="stock">Stock:</label>
+            <input type="number" id="stock" name="stock" class="form-control" value="<?= isset($producto) ? $producto['stock'] : '' ?>" required>
+        </div>
+
+        <div class="form-group">
+            <label for="valor_unitario">Valor Unitario:</label>
+            <input type="number" step="0.01" id="valor_unitario" name="valor_unitario" class="form-control" value="<?= isset($producto) ? $producto['valor_unitario'] : '' ?>" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary"><?= isset($producto) ? 'Actualizar Producto' : 'Agregar Producto' ?></button>
     </form>
 
-    <!-- Formulario de creación o edición de Producto -->
-    <form method="post" action="index.php?action=<?php echo isset($producto) ? 'producto_update&id='.$producto['id'] : 'producto_store'; ?>">
-        <label for="codigo">Código</label>
-        <input type="text" name="codigo" value="<?php echo isset($producto) ? $producto['codigo'] : ''; ?>" required>
+    <hr>
 
-        <label for="nombre">Nombre</label>
-        <input type="text" name="nombre" value="<?php echo isset($producto) ? $producto['nombre'] : ''; ?>" required>
-
-        <label for="stock">Stock</label>
-        <input type="number" name="stock" value="<?php echo isset($producto) ? $producto['stock'] : ''; ?>" required>
-
-        <label for="valor_unitario">Valor Unitario</label>
-        <input type="number" name="valor_unitario" value="<?php echo isset($producto) ? $producto['valor_unitario'] : ''; ?>" step="0.01" required>
-
-        <input type="submit" value="<?php echo isset($producto) ? 'Actualizar Producto' : 'Guardar Producto'; ?>">
-    </form>
-
-    <!-- Tabla de productos -->
-    <table>
+    <!-- Tabla para mostrar los productos existentes -->
+    <h3>Productos Registrados</h3>
+    <table class="table">
         <thead>
             <tr>
                 <th>Código</th>
@@ -41,18 +45,18 @@
         <tbody>
             <?php foreach ($productos as $producto): ?>
             <tr>
-                <td><?php echo $producto['codigo']; ?></td>
-                <td><?php echo $producto['nombre']; ?></td>
-                <td><?php echo $producto['stock']; ?></td>
-                <td><?php echo $producto['valor_unitario']; ?></td>
+                <td><?= $producto['codigo'] ?></td>
+                <td><?= $producto['nombre'] ?></td>
+                <td><?= $producto['stock'] ?></td>
+                <td><?= $producto['valor_unitario'] ?></td>
                 <td>
-                    <a href="index.php?action=producto_edit&id=<?php echo $producto['id']; ?>" class="edit">Editar</a>
-                    <a href="index.php?action=producto_delete&id=<?php echo $producto['id']; ?>" class="delete">Eliminar</a>
+                    <!-- Botón de editar -->
+                    <a href="index.php?action=editarProducto&id=<?= $producto['id'] ?>" class="btn btn-info">Editar</a>
+                    <!-- Botón de eliminar -->
+                    <a href="index.php?action=eliminarProducto&id=<?= $producto['id'] ?>" class="btn btn-danger" onclick="return confirm('¿Seguro que deseas eliminar este producto?')">Eliminar</a>
                 </td>
             </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
 </div>
-
-<?php include_once('footer.php'); ?>
