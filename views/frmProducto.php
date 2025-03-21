@@ -3,6 +3,13 @@
 <div class="container">
     <h2>Gestionar Productos</h2>
 
+    <!-- Formulario de búsqueda -->
+    <form method="post" action="index.php?action=producto_search">
+        <label for="search_query">Buscar Producto</label>
+        <input type="text" name="search_query" placeholder="Buscar por código o nombre">
+        <input type="submit" value="Buscar">
+    </form>
+
     <!-- Formulario de creación o edición de Producto -->
     <form method="post" action="index.php?action=<?php echo isset($producto) ? 'producto_update&id='.$producto['id'] : 'producto_store'; ?>">
         <label for="codigo">Código</label>

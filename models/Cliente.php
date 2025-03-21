@@ -28,6 +28,7 @@ class Cliente {
         $this->tipo_persona = $tipo_persona;
     }
 
+    // Guardar cliente
     public function save() {
         global $pdo;
         $sql = "INSERT INTO personas (codigo, email, nombre, telefono, tipo, carnet, direccion, credito, empresa_id, tipo_persona) 
@@ -47,6 +48,7 @@ class Cliente {
         ]);
     }
 
+    // Obtener todos los clientes
     public static function getAll() {
         global $pdo;
         $sql = "SELECT * FROM personas WHERE tipo = 'cliente'";
@@ -55,6 +57,7 @@ class Cliente {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Obtener un cliente por su ID
     public static function getById($id) {
         global $pdo;
         $sql = "SELECT * FROM personas WHERE id = :id AND tipo = 'cliente'";
@@ -63,7 +66,8 @@ class Cliente {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function update() {
+    // Actualizar cliente
+    public function update($id) {
         global $pdo;
         $sql = "UPDATE personas SET codigo = :codigo, email = :email, nombre = :nombre, telefono = :telefono, tipo = :tipo, carnet = :carnet, direccion = :direccion, credito = :credito, empresa_id = :empresa_id, tipo_persona = :tipo_persona WHERE id = :id";
         $stmt = $pdo->prepare($sql);
@@ -78,10 +82,11 @@ class Cliente {
             ':credito' => $this->credito,
             ':empresa_id' => $this->empresa_id,
             ':tipo_persona' => $this->tipo_persona,
-            ':id' => $this->id
+            ':id' => $id
         ]);
     }
 
+    // Eliminar cliente
     public static function delete($id) {
         global $pdo;
         $sql = "DELETE FROM personas WHERE id = :id";
@@ -89,12 +94,13 @@ class Cliente {
         $stmt->execute([':id' => $id]);
     }
 
-    public static function getEmpresaByClienteId($cliente_id) {
+    // Buscar cliente
+    public static function search($query) {
         global $pdo;
-        $sql = "SELECT * FROM empresas WHERE id = (SELECT empresa_id FROM personas WHERE id = :cliente_id)";
+        $sql = "SELECT * FROM personas WHERE nombre LIKE :query OR codigo LIKE :query";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([':cliente_id' => $cliente_id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->execute([':query' => '%' . $query . '%']);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 ?>

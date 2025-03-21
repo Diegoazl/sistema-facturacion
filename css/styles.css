@@ -13,15 +13,9 @@ body {
     padding: 20px;
 }
 
-/* Contenedor principal */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
 /* Encabezado */
 header {
-    background-color: #4CAF50;
+    background-color: #007bff; /* Azul en lugar de verde */
     color: white;
     text-align: center;
     padding: 20px;
@@ -59,7 +53,7 @@ input[type="text"], input[type="number"], input[type="email"], input[type="date"
 }
 
 input[type="submit"], button {
-    background-color: #4CAF50;
+    background-color: #007bff; /* Azul en lugar de verde */
     color: white;
     padding: 12px 20px;
     border: none;
@@ -70,7 +64,7 @@ input[type="submit"], button {
 }
 
 input[type="submit"]:hover, button:hover {
-    background-color: #45a049;
+    background-color: #0056b3; /* Un azul más oscuro para el hover */
 }
 
 /* Tablas */
@@ -97,7 +91,7 @@ table th {
 
 table td a {
     text-decoration: none;
-    color: #007BFF;
+    color: #007bff; /* Azul en lugar de verde */
     font-weight: bold;
     padding: 5px 10px;
     border-radius: 4px;
@@ -110,7 +104,7 @@ table td a:hover {
 
 /* Estilos para las tablas de acción */
 table td a.delete {
-    color: #ff6f61;
+    color: #ff6f61; /* Color de advertencia para eliminar */
 }
 
 table td a.delete:hover {
@@ -118,7 +112,7 @@ table td a.delete:hover {
 }
 
 table td a.edit {
-    color: #4CAF50;
+    color: #007bff; /* Azul en lugar de verde */
 }
 
 table td a.edit:hover {
@@ -129,17 +123,10 @@ table td a.edit:hover {
 footer {
     text-align: center;
     padding: 10px;
-    background-color: #4CAF50;
+    background-color: #007bff; /* Azul en lugar de verde */
     color: white;
     margin-top: 50px;
     border-radius: 8px;
-}
-
-/* Estilo de contenedor de botones y formularios */
-button, input[type="submit"] {
-    width: 100%;
-    max-width: 200px;
-    margin-top: 10px;
 }
 
 /* Sección de Contenido */
@@ -148,4 +135,19 @@ section {
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Sección de Botones y Formularios */
+button, input[type="submit"] {
+    width: 100%;
+    max-width: 200px;
+    margin-top: 10px;
+}
+
+/* Estilo de contenedor de botones y formularios */
+button, input[type="submit"] {
+    width: 100%;
+    max-width: 200px;
+    margin-top: 10px;
+    background-color: #007bff;
 }

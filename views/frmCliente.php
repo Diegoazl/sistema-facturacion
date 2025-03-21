@@ -3,6 +3,13 @@
 <div class="container">
     <h2>Gestionar Clientes</h2>
 
+    <!-- Formulario de búsqueda -->
+    <form method="post" action="index.php?action=cliente_search">
+        <label for="search_query">Buscar Cliente</label>
+        <input type="text" name="search_query" placeholder="Buscar por código o nombre">
+        <input type="submit" value="Buscar">
+    </form>
+
     <!-- Formulario de creación o edición de Cliente -->
     <form method="post" action="index.php?action=<?php echo isset($cliente) ? 'cliente_update&id='.$cliente['id'] : 'cliente_store'; ?>">
         <label for="codigo">Código</label>
@@ -33,6 +40,7 @@
 
         <label for="empresa_id">Empresa</label>
         <select name="empresa_id" required>
+            <!-- Aquí se agregarán las empresas disponibles -->
             <?php foreach ($empresas as $empresa): ?>
             <option value="<?php echo $empresa['id']; ?>" <?php echo isset($cliente) && $cliente['empresa_id'] == $empresa['id'] ? 'selected' : ''; ?>>
                 <?php echo $empresa['nombre']; ?>
@@ -54,7 +62,6 @@
                 <th>Nombre</th>
                 <th>Email</th>
                 <th>Teléfono</th>
-                <th>Empresa</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -65,7 +72,6 @@
                 <td><?php echo $cliente['nombre']; ?></td>
                 <td><?php echo $cliente['email']; ?></td>
                 <td><?php echo $cliente['telefono']; ?></td>
-                <td><?php echo $empresa['nombre']; ?></td>
                 <td>
                     <a href="index.php?action=cliente_edit&id=<?php echo $cliente['id']; ?>" class="edit">Editar</a>
                     <a href="index.php?action=cliente_delete&id=<?php echo $cliente['id']; ?>" class="delete">Eliminar</a>

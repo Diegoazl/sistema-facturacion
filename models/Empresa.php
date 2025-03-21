@@ -12,10 +12,10 @@ class Empresa {
         $this->nombre = $nombre;
     }
 
+    // Guardar empresa
     public function save() {
         global $pdo;
-        $sql = "INSERT INTO empresas (codigo, nombre) 
-                VALUES (:codigo, :nombre)";
+        $sql = "INSERT INTO empresas (codigo, nombre) VALUES (:codigo, :nombre)";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
             ':codigo' => $this->codigo,
@@ -23,6 +23,7 @@ class Empresa {
         ]);
     }
 
+    // Obtener todas las empresas
     public static function getAll() {
         global $pdo;
         $sql = "SELECT * FROM empresas";
@@ -31,6 +32,7 @@ class Empresa {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Obtener una empresa por ID
     public static function getById($id) {
         global $pdo;
         $sql = "SELECT * FROM empresas WHERE id = :id";
@@ -39,17 +41,19 @@ class Empresa {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function update() {
+    // Actualizar empresa
+    public function update($id) {
         global $pdo;
         $sql = "UPDATE empresas SET codigo = :codigo, nombre = :nombre WHERE id = :id";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
             ':codigo' => $this->codigo,
             ':nombre' => $this->nombre,
-            ':id' => $this->id
+            ':id' => $id
         ]);
     }
 
+    // Eliminar empresa
     public static function delete($id) {
         global $pdo;
         $sql = "DELETE FROM empresas WHERE id = :id";
