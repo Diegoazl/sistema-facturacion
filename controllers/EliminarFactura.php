@@ -5,5 +5,5 @@ $id = $_GET['id'];
 $ctrFactura = new CtrFactura();
 $ctrFactura->eliminarFactura($id);
 
-header('Location: frmFactura.php'); // Redirigir al listado de facturas
+header('Location: ../views/frmFactura.php'); // Redirigir al listado de facturas
 ?>

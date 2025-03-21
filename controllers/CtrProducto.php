@@ -9,9 +9,9 @@ class CtrProducto {
         $this->conn = (new Database())->getConnection();
     }
 
-    public function crearProducto($codigo, $nombre, $stock, $valor_unitario) {
-        $query = "INSERT INTO productos (codigo, nombre, stock, valor_unitario)
-                  VALUES ('$codigo', '$nombre', '$stock', '$valor_unitario')";
+    public function crearProducto($codigo, $nombre, $precio, $stock) {
+        $query = "INSERT INTO productos (codigo, nombre, precio, stock) 
+                  VALUES ('$codigo', '$nombre', '$precio', '$stock')";
         $this->conn->exec($query);
     }
 
@@ -25,8 +25,8 @@ class CtrProducto {
         return $this->conn->query($query)->fetch();
     }
 
-    public function actualizarProducto($id, $codigo, $nombre, $stock, $valor_unitario) {
-        $query = "UPDATE productos SET codigo = '$codigo', nombre = '$nombre', stock = '$stock', valor_unitario = '$valor_unitario' WHERE id = $id";
+    public function actualizarProducto($id, $codigo, $nombre, $precio, $stock) {
+        $query = "UPDATE productos SET codigo = '$codigo', nombre = '$nombre', precio = '$precio', stock = '$stock' WHERE id = $id";
         $this->conn->exec($query);
     }
 

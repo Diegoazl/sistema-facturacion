@@ -13,14 +13,15 @@ $conn = $database->getConnection();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Facturación</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Aquí puedes incluir tu CSS -->
+    <!-- Correcta ruta al archivo CSS -->
+    <link rel="stylesheet" href="assets/css/styles.css"> 
 </head>
 <body>
     <header>
         <h1>Sistema de Facturación</h1>
         <nav>
             <ul>
-                <!-- Los enlaces aquí son relativos a la ubicación de index.php en la raíz del proyecto -->
+                <!-- Rutas relativas a la carpeta 'views' -->
                 <li><a href="views/frmPersona.php">Personas</a></li>
                 <li><a href="views/frmVendedor.php">Vendedores</a></li>
                 <li><a href="views/frmCliente.php">Clientes</a></li>

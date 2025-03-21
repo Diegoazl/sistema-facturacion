@@ -9,29 +9,29 @@ class CtrCliente {
         $this->conn = (new Database())->getConnection();
     }
 
-    public function crearCliente($codigo, $email, $nombre, $telefono, $credito, $empresa_id, $tipo_persona) {
-        $query = "INSERT INTO personas (codigo, email, nombre, telefono, tipo, credito, empresa_id, tipo_persona)
-                  VALUES ('$codigo', '$email', '$nombre', '$telefono', 'cliente', '$credito', '$empresa_id', '$tipo_persona')";
+    public function crearCliente($codigo, $email, $nombre, $telefono, $credito, $empresa_id) {
+        $query = "INSERT INTO clientes (codigo, email, nombre, telefono, credito, empresa_id) 
+                  VALUES ('$codigo', '$email', '$nombre', '$telefono', '$credito', '$empresa_id')";
         $this->conn->exec($query);
     }
 
     public function obtenerClientes() {
-        $query = "SELECT * FROM personas WHERE tipo = 'cliente'";
+        $query = "SELECT * FROM clientes";
         return $this->conn->query($query)->fetchAll();
     }
 
     public function obtenerClientePorId($id) {
-        $query = "SELECT * FROM personas WHERE id = $id AND tipo = 'cliente'";
+        $query = "SELECT * FROM clientes WHERE id = $id";
         return $this->conn->query($query)->fetch();
     }
 
-    public function actualizarCliente($id, $codigo, $email, $nombre, $telefono, $credito, $empresa_id, $tipo_persona) {
-        $query = "UPDATE personas SET codigo = '$codigo', email = '$email', nombre = '$nombre', telefono = '$telefono', credito = '$credito', empresa_id = '$empresa_id', tipo_persona = '$tipo_persona' WHERE id = $id AND tipo = 'cliente'";
+    public function actualizarCliente($id, $codigo, $email, $nombre, $telefono, $credito, $empresa_id) {
+        $query = "UPDATE clientes SET codigo = '$codigo', email = '$email', nombre = '$nombre', telefono = '$telefono', credito = '$credito', empresa_id = '$empresa_id' WHERE id = $id";
         $this->conn->exec($query);
     }
 
     public function eliminarCliente($id) {
-        $query = "DELETE FROM personas WHERE id = $id AND tipo = 'cliente'";
+        $query = "DELETE FROM clientes WHERE id = $id";
         $this->conn->exec($query);
     }
 }

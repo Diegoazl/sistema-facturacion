@@ -5,5 +5,5 @@ $id = $_GET['id'];
 $ctrVendedor = new CtrVendedor();
 $ctrVendedor->eliminarVendedor($id);
 
-header('Location: frmVendedor.php'); // Redirigir al listado de vendedores
+header('Location: ../views/frmVendedor.php'); // Redirigir al listado de vendedores
 ?>

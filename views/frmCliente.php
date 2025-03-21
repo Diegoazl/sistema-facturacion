@@ -1,56 +1,38 @@
 <?php
-// Incluimos el controlador para obtener los clientes
-include_once '../controllers/CtrCliente.php';
-$ctrCliente = new CtrCliente();
-$clientes = $ctrCliente->obtenerClientes();
+include_once '../models/Cliente.php';
+include_once '../config/database.php';
+
+class CtrCliente {
+    private $conn;
+
+    public function __construct() {
+        $this->conn = (new Database())->getConnection();
+    }
+
+    public function crearCliente($codigo, $email, $nombre, $telefono, $credito, $empresa_id) {
+        $query = "INSERT INTO clientes (codigo, email, nombre, telefono, credito, empresa_id) 
+                  VALUES ('$codigo', '$email', '$nombre', '$telefono', '$credito', '$empresa_id')";
+        $this->conn->exec($query);
+    }
+
+    public function obtenerClientes() {
+        $query = "SELECT * FROM clientes";
+        return $this->conn->query($query)->fetchAll();
+    }
+
+    public function obtenerClientePorId($id) {
+        $query = "SELECT * FROM clientes WHERE id = $id";
+        return $this->conn->query($query)->fetch();
+    }
+
+    public function actualizarCliente($id, $codigo, $email, $nombre, $telefono, $credito, $empresa_id) {
+        $query = "UPDATE clientes SET codigo = '$codigo', email = '$email', nombre = '$nombre', telefono = '$telefono', credito = '$credito', empresa_id = '$empresa_id' WHERE id = $id";
+        $this->conn->exec($query);
+    }
+
+    public function eliminarCliente($id) {
+        $query = "DELETE FROM clientes WHERE id = $id";
+        $this->conn->exec($query);
+    }
+}
 ?>
-
-<!-- Formulario para agregar nuevo cliente -->
-<h2>Agregar Cliente</h2>
-<form method="post" action="../controllers/CrearCliente.php">
-    <label for="codigo">Código:</label>
-    <input type="text" id="codigo" name="codigo" required><br>
-
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required><br>
-
-    <label for="nombre">Nombre:</label>
-    <input type="text" id="nombre" name="nombre" required><br>
-
-    <label for="telefono">Teléfono:</label>
-    <input type="text" id="telefono" name="telefono" required><br>
-
-    <label for="credito">Crédito:</label>
-    <input type="number" id="credito" name="credito" required><br>
-
-    <label for="empresa_id">Empresa:</label>
-    <input type="text" id="empresa_id" name="empresa_id" required><br>
-
-    <input type="submit" value="Agregar Cliente">
-</form>
-
-<!-- Lista de clientes -->
-<h2>Clientes Existentes</h2>
-<table border="1">
-    <tr>
-        <th>Código</th>
-        <th>Email</th>
-        <th>Nombre</th>
-        <th>Teléfono</th>
-        <th>Crédito</th>
-        <th>Acciones</th>
-    </tr>
-    <?php foreach ($clientes as $cliente): ?>
-    <tr>
-        <td><?php echo $cliente['codigo']; ?></td>
-        <td><?php echo $cliente['email']; ?></td>
-        <td><?php echo $cliente['nombre']; ?></td>
-        <td><?php echo $cliente['telefono']; ?></td>
-        <td><?php echo $cliente['credito']; ?></td>
-        <td>
-            <a href="editarCliente.php?id=<?php echo $cliente['id']; ?>">Editar</a> |
-            <a href="eliminarCliente.php?id=<?php echo $cliente['id']; ?>">Eliminar</a>
-        </td>
-    </tr>
-    <?php endforeach; ?>
-</table>
