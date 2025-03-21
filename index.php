@@ -20,6 +20,7 @@ $conn = $database->getConnection();
         <h1>Sistema de Facturación</h1>
         <nav>
             <ul>
+                <!-- Los enlaces aquí son relativos a la ubicación de index.php en la raíz del proyecto -->
                 <li><a href="views/frmPersona.php">Personas</a></li>
                 <li><a href="views/frmVendedor.php">Vendedores</a></li>
                 <li><a href="views/frmCliente.php">Clientes</a></li>
