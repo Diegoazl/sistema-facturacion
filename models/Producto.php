@@ -6,17 +6,11 @@ class Producto {
         $this->pdo = $pdo;
     }
 
-    // Crear un producto
+    // Crear producto
     public function crearProducto($codigo, $nombre, $stock, $valor_unitario) {
-        $sql = "INSERT INTO productos (codigo, nombre, stock, valor_unitario) 
-                VALUES (:codigo, :nombre, :stock, :valor_unitario)";
+        $sql = "INSERT INTO productos (codigo, nombre, stock, valor_unitario) VALUES (?, ?, ?, ?)";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            ':codigo' => $codigo,
-            ':nombre' => $nombre,
-            ':stock' => $stock,
-            ':valor_unitario' => $valor_unitario
-        ]);
+        $stmt->execute([$codigo, $nombre, $stock, $valor_unitario]);
     }
 
     // Obtener todos los productos
@@ -26,33 +20,34 @@ class Producto {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Obtener producto por ID
-    public function obtenerProductoPorId($id) {
-        $sql = "SELECT * FROM productos WHERE id = :id";
+    // Buscar productos por nombre o código
+    public function buscarProductos($searchTerm) {
+        $sql = "SELECT * FROM productos WHERE nombre LIKE ? OR codigo LIKE ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':id' => $id]);
+        $stmt->execute(['%' . $searchTerm . '%', '%' . $searchTerm . '%']);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Obtener producto por ID
+    public function obtenerProducto($id) {
+        $sql = "SELECT * FROM productos WHERE id = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Actualizar un producto
+    // Actualizar producto
     public function actualizarProducto($id, $codigo, $nombre, $stock, $valor_unitario) {
-        $sql = "UPDATE productos SET codigo = :codigo, nombre = :nombre, stock = :stock, valor_unitario = :valor_unitario 
-                WHERE id = :id";
+        $sql = "UPDATE productos SET codigo = ?, nombre = ?, stock = ?, valor_unitario = ? WHERE id = ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            ':id' => $id,
-            ':codigo' => $codigo,
-            ':nombre' => $nombre,
-            ':stock' => $stock,
-            ':valor_unitario' => $valor_unitario
-        ]);
+        $stmt->execute([$codigo, $nombre, $stock, $valor_unitario, $id]);
     }
 
-    // Eliminar un producto
+    // Eliminar producto
     public function eliminarProducto($id) {
-        $sql = "DELETE FROM productos WHERE id = :id";
+        $sql = "DELETE FROM productos WHERE id = ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':id' => $id]);
+        $stmt->execute([$id]);
     }
 }
 ?>

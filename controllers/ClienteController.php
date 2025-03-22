@@ -1,5 +1,5 @@
 <?php
-require_once 'models/Cliente.php';
+include 'models/Cliente.php';
 
 class ClienteController {
     private $clienteModel;
@@ -9,61 +9,41 @@ class ClienteController {
     }
 
     // Mostrar todos los clientes
-    public function mostrar() {
+    public function mostrarClientes() {
         $clientes = $this->clienteModel->obtenerClientes();
-        include 'views/frmCliente.php'; // Mostrar la vista con la lista de clientes
+        include 'views/frmCliente.php';
     }
 
-    // Crear un cliente
-    public function crear() {
+    // Crear un nuevo cliente
+    public function crearCliente() {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            // Validar datos de entrada
-            if (empty($_POST['codigo']) || empty($_POST['nombre']) || empty($_POST['email'])) {
-                echo "Todos los campos son obligatorios.";
-                return;
-            }
-
             $codigo = $_POST['codigo'];
             $nombre = $_POST['nombre'];
             $email = $_POST['email'];
             $telefono = $_POST['telefono'];
-            $tipo = $_POST['tipo'];
-
-            // Llamar al modelo para crear el cliente
-            $this->clienteModel->crearCliente($codigo, $nombre, $email, $telefono, $tipo);
-            header("Location: index.php?action=mostrarClientes"); // Redirigir a la lista de clientes
+            $this->clienteModel->crearCliente($codigo, $nombre, $email, $telefono);
+            header("Location: index.php?action=mostrarClientes");
         }
-        include 'views/frmCliente.php'; // Mostrar la vista de creación de cliente
     }
 
     // Editar cliente
-    public function editar($id) {
-        $cliente = $this->clienteModel->obtenerClientePorId($id);
-
+    public function editarCliente($id) {
+        $cliente = $this->clienteModel->obtenerCliente($id);
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            // Validar datos de entrada
-            if (empty($_POST['codigo']) || empty($_POST['nombre']) || empty($_POST['email'])) {
-                echo "Todos los campos son obligatorios.";
-                return;
-            }
-
             $codigo = $_POST['codigo'];
             $nombre = $_POST['nombre'];
             $email = $_POST['email'];
             $telefono = $_POST['telefono'];
-            $tipo = $_POST['tipo'];
-
-            // Llamar al modelo para actualizar el cliente
-            $this->clienteModel->actualizarCliente($id, $codigo, $nombre, $email, $telefono, $tipo);
-            header("Location: index.php?action=mostrarClientes"); // Redirigir después de actualizar
+            $this->clienteModel->actualizarCliente($id, $codigo, $nombre, $email, $telefono);
+            header("Location: index.php?action=mostrarClientes");
         }
-        include 'views/frmCliente.php'; // Mostrar la vista de edición de cliente
+        include 'views/frmCliente.php';
     }
 
     // Eliminar cliente
-    public function eliminar($id) {
+    public function eliminarCliente($id) {
         $this->clienteModel->eliminarCliente($id);
-        header("Location: index.php?action=mostrarClientes"); // Redirigir después de eliminar
+        header("Location: index.php?action=mostrarClientes");
     }
 }
 ?>

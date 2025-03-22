@@ -1,52 +1,28 @@
 <?php
 include 'config/database.php';
-include 'controllers/ProductosPorFacturaController.php';
+include 'controllers/FacturaController.php';
 
-$productosPorFacturaController = new ProductosPorFacturaController($pdo);
+$facturaController = new FacturaController($pdo);
 
 if (isset($_GET['action'])) {
     switch ($_GET['action']) {
-        case 'mostrarProductosPorFactura':
-            if (isset($_GET['factura_id']) && is_numeric($_GET['factura_id'])) {
-                $factura_id = $_GET['factura_id'];
-                $productosPorFacturaController->mostrar($factura_id);
-            } else {
-                echo "ID de factura no válido.";
-                exit;
-            }
+        case 'mostrarFacturas':
+            $facturaController->mostrarFacturas();
             break;
-        
-        case 'agregarProducto':
-            if (isset($_GET['factura_id']) && is_numeric($_GET['factura_id'])) {
-                $factura_id = $_GET['factura_id'];
-                $productosPorFacturaController->agregar($factura_id);
-            } else {
-                echo "ID de factura no válido.";
-                exit;
-            }
+        case 'crearFactura':
+            $facturaController->crearFactura();
             break;
-
-        case 'eliminarProductoDeFactura':
-            if (isset($_GET['id']) && is_numeric($_GET['id']) && isset($_GET['factura_id']) && is_numeric($_GET['factura_id'])) {
-                $id = $_GET['id'];
-                $factura_id = $_GET['factura_id'];
-                $productosPorFacturaController->eliminar($id, $factura_id);
-            } else {
-                echo "Parámetros no válidos.";
-                exit;
-            }
+        case 'editarFactura':
+            $id = $_GET['id'];
+            $facturaController->editarFactura($id);
             break;
-
-        case 'editarProductoPorFactura':
-            if (isset($_GET['id']) && is_numeric($_GET['id'])) {
-                $id = $_GET['id'];
-                $productosPorFacturaController->actualizar($id);
-            } else {
-                echo "ID de producto no válido.";
-                exit;
-            }
+        case 'eliminarFactura':
+            $id = $_GET['id'];
+            $facturaController->eliminarFactura($id);
             break;
-
+        case 'buscarFacturas':
+            $facturaController->mostrarFacturas();
+            break;
         default:
             echo "Acción no válida.";
             break;

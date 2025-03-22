@@ -6,55 +6,40 @@ class Cliente {
         $this->pdo = $pdo;
     }
 
-    // Crear un cliente
-    public function crearCliente($codigo, $nombre, $email, $telefono, $tipo) {
-        $sql = "INSERT INTO personas (codigo, nombre, email, telefono, tipo) 
-                VALUES (:codigo, :nombre, :email, :telefono, :tipo)";
+    // Crear cliente
+    public function crearCliente($codigo, $nombre, $email, $telefono) {
+        $sql = "INSERT INTO clientes (codigo, nombre, email, telefono) VALUES (?, ?, ?, ?)";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            ':codigo' => $codigo,
-            ':nombre' => $nombre,
-            ':email' => $email,
-            ':telefono' => $telefono,
-            ':tipo' => $tipo
-        ]);
+        $stmt->execute([$codigo, $nombre, $email, $telefono]);
     }
 
     // Obtener todos los clientes
     public function obtenerClientes() {
-        $sql = "SELECT * FROM personas WHERE tipo = 'cliente'";
+        $sql = "SELECT * FROM clientes";
         $stmt = $this->pdo->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     // Obtener cliente por ID
-    public function obtenerClientePorId($id) {
-        $sql = "SELECT * FROM personas WHERE id = :id";
+    public function obtenerCliente($id) {
+        $sql = "SELECT * FROM clientes WHERE id = ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':id' => $id]);
+        $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Actualizar un cliente
-    public function actualizarCliente($id, $codigo, $nombre, $email, $telefono, $tipo) {
-        $sql = "UPDATE personas SET codigo = :codigo, nombre = :nombre, email = :email, 
-                telefono = :telefono, tipo = :tipo WHERE id = :id";
+    // Actualizar cliente
+    public function actualizarCliente($id, $codigo, $nombre, $email, $telefono) {
+        $sql = "UPDATE clientes SET codigo = ?, nombre = ?, email = ?, telefono = ? WHERE id = ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            ':id' => $id,
-            ':codigo' => $codigo,
-            ':nombre' => $nombre,
-            ':email' => $email,
-            ':telefono' => $telefono,
-            ':tipo' => $tipo
-        ]);
+        $stmt->execute([$codigo, $nombre, $email, $telefono, $id]);
     }
 
-    // Eliminar un cliente
+    // Eliminar cliente
     public function eliminarCliente($id) {
-        $sql = "DELETE FROM personas WHERE id = :id";
+        $sql = "DELETE FROM clientes WHERE id = ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':id' => $id]);
+        $stmt->execute([$id]);
     }
 }
 ?>

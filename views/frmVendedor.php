@@ -1,39 +1,58 @@
-<!-- frmVendedor.php -->
 <div class="container">
     <h2>Gestión de Vendedores</h2>
 
-    <!-- Formulario para agregar o editar vendedor -->
+    <!-- Formulario de búsqueda -->
+    <form method="GET" action="index.php">
+        <label for="search">Buscar Vendedor:</label>
+        <input type="text" name="search" id="search" placeholder="Buscar por nombre o código">
+        <button type="submit" name="action" value="buscarVendedores">Buscar</button>
+    </form>
+
+    <!-- Formulario para crear o editar vendedor -->
     <h3><?= isset($vendedor) ? 'Editar Vendedor' : 'Agregar Nuevo Vendedor' ?></h3>
     <form method="POST" action="index.php?action=<?= isset($vendedor) ? 'editarVendedor&id=' . $vendedor['id'] : 'crearVendedor' ?>">
         <div class="form-group">
-            <label for="persona_id">Persona ID:</label>
-            <input type="text" id="persona_id" name="persona_id" class="form-control" value="<?= isset($vendedor) ? $vendedor['fk_persona_id'] : '' ?>" required>
+            <label for="codigo">Código:</label>
+            <input type="text" name="codigo" class="form-control" value="<?= isset($vendedor) ? $vendedor['codigo'] : '' ?>" required>
         </div>
 
-        <button type="submit" class="btn btn-primary"><?= isset($vendedor) ? 'Actualizar Vendedor' : 'Agregar Vendedor' ?></button>
+        <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input type="text" name="nombre" class="form-control" value="<?= isset($vendedor) ? $vendedor['nombre'] : '' ?>" required>
+        </div>
+
+        <button type="submit"><?= isset($vendedor) ? 'Actualizar Vendedor' : 'Agregar Vendedor' ?></button>
     </form>
 
     <hr>
 
-    <!-- Tabla para mostrar los vendedores existentes -->
+    <!-- Mostrar lista de vendedores -->
     <h3>Vendedores Registrados</h3>
     <table class="table">
         <thead>
             <tr>
-                <th>Persona ID</th>
+                <th>Código</th>
+                <th>Nombre</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($vendedores as $vendedor): ?>
+            <?php
+            // Mostrar vendedores según la búsqueda (si hay un término de búsqueda)
+            $vendedores = isset($vendedoresBuscados) ? $vendedoresBuscados : $vendedores;
+            foreach ($vendedores as $vendedor):
+            ?>
                 <tr>
-                    <td><?= $vendedor['fk_persona_id'] ?></td>
+                    <td><?= $vendedor['codigo'] ?></td>
+                    <td><?= $vendedor['nombre'] ?></td>
                     <td>
-                        <a href="index.php?action=editarVendedor&id=<?= $vendedor['id'] ?>" class="btn btn-info">Editar</a>
-                        <a href="index.php?action=eliminarVendedor&id=<?= $vendedor['id'] ?>" class="btn btn-danger" onclick="return confirm('¿Seguro que deseas eliminar este vendedor?')">Eliminar</a>
+                        <a href="index.php?action=editarVendedor&id=<?= $vendedor['id'] ?>">Editar</a>
+                        <a href="index.php?action=eliminarVendedor&id=<?= $vendedor['id'] ?>" onclick="return confirm('¿Seguro que deseas eliminar este vendedor?')">Eliminar</a>
                     </td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
+
+    <a href="index.php" class="btn btn-secondary">Regresar</a>
 </div>

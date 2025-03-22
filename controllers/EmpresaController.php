@@ -1,5 +1,5 @@
 <?php
-require_once 'models/Empresa.php';
+include 'models/Empresa.php';
 
 class EmpresaController {
     private $empresaModel;
@@ -9,39 +9,43 @@ class EmpresaController {
     }
 
     // Mostrar todas las empresas
-    public function index() {
-        $empresas = $this->empresaModel->getAll();
-        include 'views/frmEmpresa.php'; // Mostrar la vista con las empresas
-    }
-
-    // Crear o actualizar empresa
-    public function storeOrUpdate() {
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $codigo = $_POST['codigo'];
-            $nombre = $_POST['nombre'];
-            $empresa = new Empresa($codigo, $nombre);
-
-            // Si tiene ID, actualizar, si no es nueva, creamos una empresa
-            if (isset($_GET['id'])) {
-                $empresa->save();
-                header("Location: index.php?action=empresa_index"); // Redirigir a la lista de empresas
-            } else {
-                $empresa->save();
-                header("Location: index.php?action=empresa_index");
-            }
+    public function mostrarEmpresas() {
+        if (isset($_GET['search'])) {
+            $searchTerm = $_GET['search'];
+            $empresasBuscadas = $this->empresaModel->buscarEmpresas($searchTerm);
+            include 'views/frmEmpresa.php';
+        } else {
+            $empresas = $this->empresaModel->obtenerEmpresas();
+            include 'views/frmEmpresa.php';
         }
     }
 
-    // Eliminar empresa
-    public function delete($id) {
-        $this->empresaModel->delete($id);
-        header("Location: index.php?action=empresa_index");
+    // Crear una nueva empresa
+    public function crearEmpresa() {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $codigo = $_POST['codigo'];
+            $nombre = $_POST['nombre'];
+            $this->empresaModel->crearEmpresa($codigo, $nombre);
+            header("Location: index.php?action=mostrarEmpresas");
+        }
     }
 
     // Editar empresa
-    public function edit($id) {
-        $empresa = $this->empresaModel->getById($id);
-        include 'views/frmEmpresa.php'; // Mostrar la vista para editar
+    public function editarEmpresa($id) {
+        $empresa = $this->empresaModel->obtenerEmpresa($id);
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $codigo = $_POST['codigo'];
+            $nombre = $_POST['nombre'];
+            $this->empresaModel->actualizarEmpresa($id, $codigo, $nombre);
+            header("Location: index.php?action=mostrarEmpresas");
+        }
+        include 'views/frmEmpresa.php';
+    }
+
+    // Eliminar empresa
+    public function eliminarEmpresa($id) {
+        $this->empresaModel->eliminarEmpresa($id);
+        header("Location: index.php?action=mostrarEmpresas");
     }
 }
 ?>

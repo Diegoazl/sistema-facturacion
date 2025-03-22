@@ -6,17 +6,11 @@ class Factura {
         $this->pdo = $pdo;
     }
 
-    // Crear una factura
-    public function crearFactura($numero, $cliente_id, $vendedor_id, $total) {
-        $sql = "INSERT INTO facturas (numero, cliente_id, vendedor_id, total) 
-                VALUES (:numero, :cliente_id, :vendedor_id, :total)";
+    // Crear factura
+    public function crearFactura($numero, $cliente_id, $total) {
+        $sql = "INSERT INTO facturas (numero, cliente_id, total) VALUES (?, ?, ?)";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            ':numero' => $numero,
-            ':cliente_id' => $cliente_id,
-            ':vendedor_id' => $vendedor_id,
-            ':total' => $total
-        ]);
+        $stmt->execute([$numero, $cliente_id, $total]);
     }
 
     // Obtener todas las facturas
@@ -26,33 +20,34 @@ class Factura {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Obtener factura por ID
-    public function obtenerFacturaPorId($id) {
-        $sql = "SELECT * FROM facturas WHERE id = :id";
+    // Buscar facturas por número
+    public function buscarFacturas($searchTerm) {
+        $sql = "SELECT * FROM facturas WHERE numero LIKE ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':id' => $id]);
+        $stmt->execute(['%' . $searchTerm . '%']);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Obtener factura por ID
+    public function obtenerFactura($id) {
+        $sql = "SELECT * FROM facturas WHERE id = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Actualizar una factura
-    public function actualizarFactura($id, $numero, $cliente_id, $vendedor_id, $total) {
-        $sql = "UPDATE facturas SET numero = :numero, cliente_id = :cliente_id, vendedor_id = :vendedor_id, total = :total 
-                WHERE id = :id";
+    // Actualizar factura
+    public function actualizarFactura($id, $numero, $cliente_id, $total) {
+        $sql = "UPDATE facturas SET numero = ?, cliente_id = ?, total = ? WHERE id = ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            ':id' => $id,
-            ':numero' => $numero,
-            ':cliente_id' => $cliente_id,
-            ':vendedor_id' => $vendedor_id,
-            ':total' => $total
-        ]);
+        $stmt->execute([$numero, $cliente_id, $total, $id]);
     }
 
-    // Eliminar una factura
+    // Eliminar factura
     public function eliminarFactura($id) {
-        $sql = "DELETE FROM facturas WHERE id = :id";
+        $sql = "DELETE FROM facturas WHERE id = ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':id' => $id]);
+        $stmt->execute([$id]);
     }
 }
 ?>

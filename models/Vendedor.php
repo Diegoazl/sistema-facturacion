@@ -6,11 +6,11 @@ class Vendedor {
         $this->pdo = $pdo;
     }
 
-    // Crear un vendedor
-    public function crearVendedor($persona_id) {
-        $sql = "INSERT INTO vendedores (fk_persona_id) VALUES (:persona_id)";
+    // Crear vendedor
+    public function crearVendedor($codigo, $nombre) {
+        $sql = "INSERT INTO vendedores (codigo, nombre) VALUES (?, ?)";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':persona_id' => $persona_id]);
+        $stmt->execute([$codigo, $nombre]);
     }
 
     // Obtener todos los vendedores
@@ -20,29 +20,34 @@ class Vendedor {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Obtener vendedor por ID
-    public function obtenerVendedorPorId($id) {
-        $sql = "SELECT * FROM vendedores WHERE id = :id";
+    // Buscar vendedores por nombre o código
+    public function buscarVendedores($searchTerm) {
+        $sql = "SELECT * FROM vendedores WHERE nombre LIKE ? OR codigo LIKE ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':id' => $id]);
+        $stmt->execute(['%' . $searchTerm . '%', '%' . $searchTerm . '%']);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Obtener vendedor por ID
+    public function obtenerVendedor($id) {
+        $sql = "SELECT * FROM vendedores WHERE id = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Actualizar un vendedor
-    public function actualizarVendedor($id, $persona_id) {
-        $sql = "UPDATE vendedores SET fk_persona_id = :persona_id WHERE id = :id";
+    // Actualizar vendedor
+    public function actualizarVendedor($id, $codigo, $nombre) {
+        $sql = "UPDATE vendedores SET codigo = ?, nombre = ? WHERE id = ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            ':id' => $id,
-            ':persona_id' => $persona_id
-        ]);
+        $stmt->execute([$codigo, $nombre, $id]);
     }
 
-    // Eliminar un vendedor
+    // Eliminar vendedor
     public function eliminarVendedor($id) {
-        $sql = "DELETE FROM vendedores WHERE id = :id";
+        $sql = "DELETE FROM vendedores WHERE id = ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':id' => $id]);
+        $stmt->execute([$id]);
     }
 }
 ?>

@@ -1,60 +1,55 @@
 <?php
-class Producto {
-    private $pdo;
+include 'models/Producto.php';
+
+class ProductoController {
+    private $productoModel;
 
     public function __construct($pdo) {
-        $this->pdo = $pdo;
+        $this->productoModel = new Producto($pdo);
     }
 
-    // Crear un producto
-    public function crearProducto($codigo, $nombre, $stock, $valor_unitario) {
-        $sql = "INSERT INTO productos (codigo, nombre, stock, valor_unitario) 
-                VALUES (:codigo, :nombre, :stock, :valor_unitario)";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            ':codigo' => $codigo,
-            ':nombre' => $nombre,
-            ':stock' => $stock,
-            ':valor_unitario' => $valor_unitario
-        ]);
+    // Mostrar todos los productos
+    public function mostrarProductos() {
+        if (isset($_GET['search'])) {
+            $searchTerm = $_GET['search'];
+            $productosBuscados = $this->productoModel->buscarProductos($searchTerm);
+            include 'views/frmProducto.php';
+        } else {
+            $productos = $this->productoModel->obtenerProductos();
+            include 'views/frmProducto.php';
+        }
     }
 
-    // Obtener todos los productos
-    public function obtenerProductos() {
-        $sql = "SELECT * FROM productos";
-        $stmt = $this->pdo->query($sql);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Crear un nuevo producto
+    public function crearProducto() {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $codigo = $_POST['codigo'];
+            $nombre = $_POST['nombre'];
+            $stock = $_POST['stock'];
+            $valor_unitario = $_POST['valor_unitario'];
+            $this->productoModel->crearProducto($codigo, $nombre, $stock, $valor_unitario);
+            header("Location: index.php?action=mostrarProductos");
+        }
     }
 
-    // Obtener producto por ID
-    public function obtenerProductoPorId($id) {
-        $sql = "SELECT * FROM productos WHERE id = :id";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':id' => $id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+    // Editar producto
+    public function editarProducto($id) {
+        $producto = $this->productoModel->obtenerProducto($id);
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $codigo = $_POST['codigo'];
+            $nombre = $_POST['nombre'];
+            $stock = $_POST['stock'];
+            $valor_unitario = $_POST['valor_unitario'];
+            $this->productoModel->actualizarProducto($id, $codigo, $nombre, $stock, $valor_unitario);
+            header("Location: index.php?action=mostrarProductos");
+        }
+        include 'views/frmProducto.php';
     }
 
-    // Actualizar un producto
-    public function actualizarProducto($id, $codigo, $nombre, $stock, $valor_unitario) {
-        $sql = "UPDATE productos SET codigo = :codigo, nombre = :nombre, stock = :stock, valor_unitario = :valor_unitario 
-                WHERE id = :id";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            ':id' => $id,
-            ':codigo' => $codigo,
-            ':nombre' => $nombre,
-            ':stock' => $stock,
-            ':valor_unitario' => $valor_unitario
-        ]);
-    }
-
-    // Eliminar un producto
+    // Eliminar producto
     public function eliminarProducto($id) {
-        $sql = "DELETE FROM productos WHERE id = :id";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':id' => $id]);
+        $this->productoModel->eliminarProducto($id);
+        header("Location: index.php?action=mostrarProductos");
     }
 }
 ?>
-
-

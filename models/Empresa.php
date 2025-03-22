@@ -1,67 +1,53 @@
 <?php
 class Empresa {
-    private $id;
-    private $codigo;
-    private $nombre;
-    
-    public function __construct($codigo, $nombre, $id = null) {
-        $this->id = $id;
-        $this->codigo = $codigo;
-        $this->nombre = $nombre;
+    private $pdo;
+
+    public function __construct($pdo) {
+        $this->pdo = $pdo;
     }
 
-    // Guardar o actualizar empresa
-    public function save() {
-        global $pdo;
-
-        if ($this->id) {
-            // Actualizar empresa
-            $sql = "UPDATE empresas SET codigo = :codigo, nombre = :nombre WHERE id = :id";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([':id' => $this->id, ':codigo' => $this->codigo, ':nombre' => $this->nombre]);
-        } else {
-            // Crear nueva empresa
-            $sql = "INSERT INTO empresas (codigo, nombre) VALUES (:codigo, :nombre)";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([':codigo' => $this->codigo, ':nombre' => $this->nombre]);
-        }
+    // Crear empresa
+    public function crearEmpresa($codigo, $nombre) {
+        $sql = "INSERT INTO empresas (codigo, nombre) VALUES (?, ?)";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$codigo, $nombre]);
     }
 
-    // Eliminar empresa (verificar si tiene clientes o vendedores asociados)
-    public function delete($id) {
-        global $pdo;
-
-        // Verificar si la empresa tiene clientes o vendedores asociados
-        $sql = "SELECT COUNT(*) FROM clientes WHERE empresa_id = :id";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([':id' => $id]);
-        $clientes = $stmt->fetchColumn();
-
-        if ($clientes > 0) {
-            echo "No se puede eliminar la empresa porque tiene clientes asociados.";
-            return;
-        }
-
-        $sql = "DELETE FROM empresas WHERE id = :id";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([':id' => $id]);
-    }
-
-    // Obtener todos los registros de empresas
-    public function getAll() {
-        global $pdo;
+    // Obtener todas las empresas
+    public function obtenerEmpresas() {
         $sql = "SELECT * FROM empresas";
-        $stmt = $pdo->query($sql);
+        $stmt = $this->pdo->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Buscar empresas por nombre o código
+    public function buscarEmpresas($searchTerm) {
+        $sql = "SELECT * FROM empresas WHERE nombre LIKE ? OR codigo LIKE ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['%' . $searchTerm . '%', '%' . $searchTerm . '%']);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     // Obtener empresa por ID
-    public function getById($id) {
-        global $pdo;
-        $sql = "SELECT * FROM empresas WHERE id = :id";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([':id' => $id]);
+    public function obtenerEmpresa($id) {
+        $sql = "SELECT * FROM empresas WHERE id = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // Actualizar empresa
+    public function actualizarEmpresa($id, $codigo, $nombre) {
+        $sql = "UPDATE empresas SET codigo = ?, nombre = ? WHERE id = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$codigo, $nombre, $id]);
+    }
+
+    // Eliminar empresa
+    public function eliminarEmpresa($id) {
+        $sql = "DELETE FROM empresas WHERE id = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$id]);
     }
 }
 ?>
