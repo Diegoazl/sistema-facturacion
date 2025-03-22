@@ -1,33 +1,86 @@
-
 <?php
-require_once '../config/database.php';
 
-class ProductosPorFactura extends Conexion {
-    public function create($data) {
-        $sql = "INSERT INTO productos_por_factura (factura_id, producto_id, cantidad, subtotal)
-                VALUES (?, ?, ?, ?)";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([
-            $data['factura_id'],
-            $data['producto_id'],
-            $data['cantidad'],
-            $data['subtotal']
-        ]);
+class ProductosPorFactura {
+    private $fknumfactura;
+    private $fkcodproducto;
+    private $cantidad;
+    private $subtotal;
+
+    // Constructor
+    public function __construct($fknumfactura = null, $fkcodproducto = "", $cantidad = 0, $subtotal = 0.0) {
+        $this->fknumfactura = $fknumfactura;
+        $this->fkcodproducto = $fkcodproducto;
+        $this->cantidad = $cantidad;
+        $this->subtotal = $subtotal;
     }
 
-    public function read($factura_id) {
-        $sql = "SELECT pf.*, p.nombre, p.valor_unitario
-                FROM productos_por_factura pf
-                JOIN productos p ON pf.producto_id = p.id
-                WHERE pf.factura_id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$factura_id]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Métodos getter y setter
+    public function getFknumfactura() {
+        return $this->fknumfactura;
     }
 
-    public function delete($id) {
-        $sql = "DELETE FROM productos_por_factura WHERE id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$id]);
+    public function setFknumfactura($fknumfactura) {
+        $this->fknumfactura = $fknumfactura;
+    }
+
+    public function getFkcodproducto() {
+        return $this->fkcodproducto;
+    }
+
+    public function setFkcodproducto($fkcodproducto) {
+        $this->fkcodproducto = $fkcodproducto;
+    }
+
+    public function getCantidad() {
+        return $this->cantidad;
+    }
+
+    public function setCantidad($cantidad) {
+        $this->cantidad = $cantidad;
+    }
+
+    public function getSubtotal() {
+        return $this->subtotal;
+    }
+
+    public function setSubtotal($subtotal) {
+        $this->subtotal = $subtotal;
+    }
+
+    // Método para agregar un producto a la factura
+    public function create($conexion) {
+        $query = "INSERT INTO productosporfactura (fknumfactura, fkcodproducto, cantidad, subtotal) 
+                  VALUES (?, ?, ?, ?)";
+        $stmt = $conexion->prepare($query);
+        return $stmt->execute([$this->fknumfactura, $this->fkcodproducto, $this->cantidad, $this->subtotal]);
+    }
+
+    // Método para obtener productos de una factura
+    public static function getByFactura($conexion, $fknumfactura) {
+        $query = "SELECT * FROM productosporfactura WHERE fknumfactura = ?";
+        $stmt = $conexion->prepare($query);
+        $stmt->execute([$fknumfactura]);
+        $result = $stmt->fetchAll();
+
+        $productosPorFactura = [];
+        foreach ($result as $row) {
+            $productosPorFactura[] = new ProductosPorFactura($row['fknumfactura'], $row['fkcodproducto'], $row['cantidad'], $row['subtotal']);
+        }
+        return $productosPorFactura;
+    }
+
+    // Método para actualizar la cantidad o subtotal
+    public function update($conexion) {
+        $query = "UPDATE productosporfactura SET cantidad = ?, subtotal = ? WHERE fknumfactura = ? AND fkcodproducto = ?";
+        $stmt = $conexion->prepare($query);
+        return $stmt->execute([$this->cantidad, $this->subtotal, $this->fknumfactura, $this->fkcodproducto]);
+    }
+
+    // Método para eliminar un producto de una factura
+    public function delete($conexion) {
+        $query = "DELETE FROM productosporfactura WHERE fknumfactura = ? AND fkcodproducto = ?";
+        $stmt = $conexion->prepare($query);
+        return $stmt->execute([$this->fknumfactura, $this->fkcodproducto]);
     }
 }
+?>

@@ -1,36 +1,65 @@
-
 <?php
-require_once '../config/database.php';
 
-class Producto extends Conexion {
-    public function create($data) {
-        $sql = "INSERT INTO productos (codigo, nombre, precio, stock) VALUES (?, ?, ?, ?)";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$data['codigo'], $data['nombre'], $data['precio'], $data['stock']]);
+class Producto {
+    private $codigo;
+    private $nombre;
+    private $stock;
+    private $valorunitario;
+
+    public function __construct($codigo = "", $nombre = "", $stock = 0, $valorunitario = 0.0) {
+        $this->codigo = $codigo;
+        $this->nombre = $nombre;
+        $this->stock = $stock;
+        $this->valorunitario = $valorunitario;
     }
 
-    public function read() {
-        $sql = "SELECT * FROM productos";
-        $stmt = $this->conn->query($sql);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Getters para acceder a las propiedades privadas
+    public function getCodigo() { return $this->codigo; }
+    public function getNombre() { return $this->nombre; }
+    public function getStock() { return $this->stock; }
+    public function getValorUnitario() { return $this->valorunitario; }
+
+    // Crear producto
+    public function create($conexion) {
+        $query = "INSERT INTO producto (codigo, nombre, stock, valorunitario) VALUES (?, ?, ?, ?)";
+        $stmt = $conexion->prepare($query);
+        return $stmt->execute([$this->codigo, $this->nombre, $this->stock, $this->valorunitario]);
     }
 
-    public function update($data) {
-        $sql = "UPDATE productos SET codigo = ?, nombre = ?, precio = ?, stock = ? WHERE id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$data['codigo'], $data['nombre'], $data['precio'], $data['stock'], $data['id']]);
+    // Obtener todos los productos
+    public static function getAll($conexion) {
+        $query = "SELECT * FROM producto";
+        $stmt = $conexion->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
+
+        $productos = [];
+        foreach ($result as $row) {
+            $productos[] = new Producto($row['codigo'], $row['nombre'], $row['stock'], $row['valorunitario']);
+        }
+        return $productos;
     }
 
-    public function delete($id) {
-        $sql = "DELETE FROM productos WHERE id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$id]);
+    // Obtener un producto por código
+    public static function findByCodigo($conexion, $codigo) {
+        $query = "SELECT * FROM producto WHERE codigo = ?";
+        $stmt = $conexion->prepare($query);
+        $stmt->execute([$codigo]);
+        $result = $stmt->fetch();
+        return $result ? new Producto($result['codigo'], $result['nombre'], $result['stock'], $result['valorunitario']) : null;
     }
 
-    public function getById($id) {
-        $sql = "SELECT * FROM productos WHERE id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+    // Actualizar producto
+    public function update($conexion) {
+        $query = "UPDATE producto SET nombre = ?, stock = ?, valorunitario = ? WHERE codigo = ?";
+        $stmt = $conexion->prepare($query);
+        return $stmt->execute([$this->nombre, $this->stock, $this->valorunitario, $this->codigo]);
+    }
+
+    // Eliminar producto
+    public function delete($conexion) {
+        $query = "DELETE FROM producto WHERE codigo = ?";
+        $stmt = $conexion->prepare($query);
+        return $stmt->execute([$this->codigo]);
     }
 }
