@@ -1,58 +1,66 @@
+
+<?php
+require_once '../controllers/VendedorController.php';
+$controller = new VendedorController();
+
+$vendedorEdit = null;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!empty($_POST['id'])) {
+        $controller->update($_POST);
+    } else {
+        $controller->create($_POST);
+    }
+} elseif (isset($_GET['delete'])) {
+    $controller->delete($_GET['delete']);
+} elseif (isset($_GET['edit'])) {
+    $vendedorEdit = $controller->getById($_GET['edit']);
+}
+
+$vendedores = $controller->read();
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vendedores</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
 <div class="container">
-    <h2>Gestión de Vendedores</h2>
+    <h2>Vendedores</h2>
 
-    <!-- Formulario de búsqueda -->
-    <form method="GET" action="index.php">
-        <label for="search">Buscar Vendedor:</label>
-        <input type="text" name="search" id="search" placeholder="Buscar por nombre o código">
-        <button type="submit" name="action" value="buscarVendedores">Buscar</button>
+    <form method="POST">
+        <input type="hidden" name="id" value="<?= $vendedorEdit['id'] ?? '' ?>">
+        <label>Nombre:</label>
+        <input type="text" name="nombre" value="<?= $vendedorEdit['nombre'] ?? '' ?>" required>
+        <label>Correo:</label>
+        <input type="email" name="correo" value="<?= $vendedorEdit['correo'] ?? '' ?>" required>
+        <label>Teléfono:</label>
+        <input type="tel" name="telefono" value="<?= $vendedorEdit['telefono'] ?? '' ?>" required>
+        <button class="btn" type="submit"><?= $vendedorEdit ? 'Actualizar' : 'Guardar' ?></button>
     </form>
 
-    <!-- Formulario para crear o editar vendedor -->
-    <h3><?= isset($vendedor) ? 'Editar Vendedor' : 'Agregar Nuevo Vendedor' ?></h3>
-    <form method="POST" action="index.php?action=<?= isset($vendedor) ? 'editarVendedor&id=' . $vendedor['id'] : 'crearVendedor' ?>">
-        <div class="form-group">
-            <label for="codigo">Código:</label>
-            <input type="text" name="codigo" class="form-control" value="<?= isset($vendedor) ? $vendedor['codigo'] : '' ?>" required>
-        </div>
-
-        <div class="form-group">
-            <label for="nombre">Nombre:</label>
-            <input type="text" name="nombre" class="form-control" value="<?= isset($vendedor) ? $vendedor['nombre'] : '' ?>" required>
-        </div>
-
-        <button type="submit"><?= isset($vendedor) ? 'Actualizar Vendedor' : 'Agregar Vendedor' ?></button>
-    </form>
-
-    <hr>
-
-    <!-- Mostrar lista de vendedores -->
-    <h3>Vendedores Registrados</h3>
-    <table class="table">
+    <table>
         <thead>
-            <tr>
-                <th>Código</th>
-                <th>Nombre</th>
-                <th>Acciones</th>
-            </tr>
+            <tr><th>ID</th><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>Acciones</th></tr>
         </thead>
         <tbody>
-            <?php
-            // Mostrar vendedores según la búsqueda (si hay un término de búsqueda)
-            $vendedores = isset($vendedoresBuscados) ? $vendedoresBuscados : $vendedores;
-            foreach ($vendedores as $vendedor):
-            ?>
+            <?php foreach ($vendedores as $v): ?>
                 <tr>
-                    <td><?= $vendedor['codigo'] ?></td>
-                    <td><?= $vendedor['nombre'] ?></td>
+                    <td><?= $v['id'] ?></td>
+                    <td><?= $v['nombre'] ?></td>
+                    <td><?= $v['correo'] ?></td>
+                    <td><?= $v['telefono'] ?></td>
                     <td>
-                        <a href="index.php?action=editarVendedor&id=<?= $vendedor['id'] ?>">Editar</a>
-                        <a href="index.php?action=eliminarVendedor&id=<?= $vendedor['id'] ?>" onclick="return confirm('¿Seguro que deseas eliminar este vendedor?')">Eliminar</a>
+                        <a class="btn" href="?edit=<?= $v['id'] ?>">Editar</a>
+                        <a class="btn" href="?delete=<?= $v['id'] ?>" onclick="return confirm('¿Eliminar?')">Eliminar</a>
                     </td>
                 </tr>
-            <?php endforeach; ?>
+            <?php endforeach ?>
         </tbody>
     </table>
-
-    <a href="index.php" class="btn btn-secondary">Regresar</a>
+    <br>
+    <a href="../index.php" class="btn">← Volver</a>
 </div>
+</body>
+</html>

@@ -1,53 +1,35 @@
+
 <?php
-class Vendedor {
-    private $pdo;
+require_once 'Persona.php';
 
-    public function __construct($pdo) {
-        $this->pdo = $pdo;
+class Vendedor extends Persona {
+    public function create($data) {
+        $sql = "INSERT INTO personas (codigo, email, nombre, telefono, tipo, carnet, direccion, credito, empresa_id, tipo_persona)
+                VALUES (?, ?, ?, ?, 'vendedor', ?, ?, ?, ?, ?)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$data['codigo'], $data['email'], $data['nombre'], $data['telefono'], $data['carnet'], $data['direccion'], $data['credito'], $data['empresa_id'], $data['tipo_persona']]);
     }
 
-    // Crear vendedor
-    public function crearVendedor($codigo, $nombre) {
-        $sql = "INSERT INTO vendedores (codigo, nombre) VALUES (?, ?)";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$codigo, $nombre]);
-    }
-
-    // Obtener todos los vendedores
-    public function obtenerVendedores() {
-        $sql = "SELECT * FROM vendedores";
-        $stmt = $this->pdo->query($sql);
+    public function read() {
+        $stmt = $this->conn->query("SELECT * FROM personas WHERE tipo = 'vendedor'");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Buscar vendedores por nombre o código
-    public function buscarVendedores($searchTerm) {
-        $sql = "SELECT * FROM vendedores WHERE nombre LIKE ? OR codigo LIKE ?";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['%' . $searchTerm . '%', '%' . $searchTerm . '%']);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function update($data) {
+        $sql = "UPDATE personas SET codigo = ?, email = ?, nombre = ?, telefono = ?, carnet = ?, direccion = ?, credito = ?, empresa_id = ?, tipo_persona = ?
+                WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$data['codigo'], $data['email'], $data['nombre'], $data['telefono'], $data['carnet'], $data['direccion'], $data['credito'], $data['empresa_id'], $data['tipo_persona'], $data['id']]);
     }
 
-    // Obtener vendedor por ID
-    public function obtenerVendedor($id) {
-        $sql = "SELECT * FROM vendedores WHERE id = ?";
-        $stmt = $this->pdo->prepare($sql);
+    public function delete($id) {
+        $stmt = $this->conn->prepare("DELETE FROM personas WHERE id = ? AND tipo = 'vendedor'");
+        $stmt->execute([$id]);
+    }
+
+    public function getById($id) {
+        $stmt = $this->conn->prepare("SELECT * FROM personas WHERE id = ? AND tipo = 'vendedor'");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-
-    // Actualizar vendedor
-    public function actualizarVendedor($id, $codigo, $nombre) {
-        $sql = "UPDATE vendedores SET codigo = ?, nombre = ? WHERE id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$codigo, $nombre, $id]);
-    }
-
-    // Eliminar vendedor
-    public function eliminarVendedor($id) {
-        $sql = "DELETE FROM vendedores WHERE id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$id]);
-    }
 }
-?>

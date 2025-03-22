@@ -1,49 +1,43 @@
+
 <?php
-require_once 'models/ProductosPorFactura.php';
+require_once '../models/ProductosPorFactura.php';
+require_once '../models/Producto.php';
+require_once '../models/Factura.php';
 
 class ProductosPorFacturaController {
-    private $productosPorFacturaModel;
+    public function create($data) {
+        $productoModel = new Producto();
+        $producto = $productoModel->getById($data['producto_id']);
+        $data['subtotal'] = $producto['valor_unitario'] * $data['cantidad'];
 
-    public function __construct($pdo) {
-        $this->productosPorFacturaModel = new ProductosPorFactura($pdo);
+        $model = new ProductosPorFactura();
+        $model->create($data);
+
+        // actualizar total en factura
+        $facturaModel = new Factura();
+        $items = $model->read($data['factura_id']);
+        $total = array_sum(array_column($items, 'subtotal'));
+        $facturaModel->updateTotal($data['factura_id'], $total);
+
+        header("Location: frmProductosPorFactura.php?factura_id=" . $data['factura_id']);
     }
 
-    // Mostrar productos de una factura
-    public function mostrar($factura_id) {
-        $productos = $this->productosPorFacturaModel->obtenerProductosPorFactura($factura_id);
-        include 'views/frmProductosPorFactura.php'; // Mostrar la vista de productos por factura
+    public function read($factura_id) {
+        $model = new ProductosPorFactura();
+        return $model->read($factura_id);
     }
 
-    // Agregar producto a una factura
-    public function agregar($factura_id) {
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $producto_id = $_POST['producto_id'];
-            $cantidad = $_POST['cantidad'];
-            $subtotal = $_POST['subtotal'];
+    public function delete($id, $factura_id) {
+        $model = new ProductosPorFactura();
+        $model->delete($id);
 
-            // Llamar al modelo para agregar el producto a la factura
-            $this->productosPorFacturaModel->agregarProductoAFactura($factura_id, $producto_id, $cantidad, $subtotal);
-            header("Location: index.php?action=mostrarProductosPorFactura&factura_id=" . $factura_id); // Redirigir a la lista de productos de la factura
-        }
-        include 'views/frmAgregarProducto.php'; // Mostrar la vista de agregar producto
-    }
+        // actualizar total
+        $items = $model->read($factura_id);
+        $total = array_sum(array_column($items, 'subtotal'));
 
-    // Actualizar cantidad de un producto en una factura
-    public function actualizar($id) {
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $cantidad = $_POST['cantidad'];
-            $subtotal = $_POST['subtotal'];
+        $facturaModel = new Factura();
+        $facturaModel->updateTotal($factura_id, $total);
 
-            // Llamar al modelo para actualizar la cantidad y subtotal
-            $this->productosPorFacturaModel->actualizarCantidad($id, $cantidad, $subtotal);
-            header("Location: index.php?action=mostrarProductosPorFactura&factura_id=" . $_POST['factura_id']); // Redirigir después de actualizar
-        }
-    }
-
-    // Eliminar producto de una factura
-    public function eliminar($id, $factura_id) {
-        $this->productosPorFacturaModel->eliminarProductoDeFactura($id);
-        header("Location: index.php?action=mostrarProductosPorFactura&factura_id=" . $factura_id); // Redirigir después de eliminar
+        header("Location: frmProductosPorFactura.php?factura_id=" . $factura_id);
     }
 }
-?>

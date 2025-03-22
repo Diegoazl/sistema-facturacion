@@ -1,45 +1,35 @@
+
 <?php
-class Cliente {
-    private $pdo;
+require_once 'Persona.php';
 
-    public function __construct($pdo) {
-        $this->pdo = $pdo;
+class Cliente extends Persona {
+    public function create($data) {
+        $sql = "INSERT INTO personas (codigo, email, nombre, telefono, tipo, carnet, direccion, credito, empresa_id, tipo_persona)
+                VALUES (?, ?, ?, ?, 'cliente', ?, ?, ?, ?, ?)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$data['codigo'], $data['email'], $data['nombre'], $data['telefono'], $data['carnet'], $data['direccion'], $data['credito'], $data['empresa_id'], $data['tipo_persona']]);
     }
 
-    // Crear cliente
-    public function crearCliente($codigo, $nombre, $email, $telefono) {
-        $sql = "INSERT INTO clientes (codigo, nombre, email, telefono) VALUES (?, ?, ?, ?)";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$codigo, $nombre, $email, $telefono]);
-    }
-
-    // Obtener todos los clientes
-    public function obtenerClientes() {
-        $sql = "SELECT * FROM clientes";
-        $stmt = $this->pdo->query($sql);
+    public function read() {
+        $stmt = $this->conn->query("SELECT * FROM personas WHERE tipo = 'cliente'");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Obtener cliente por ID
-    public function obtenerCliente($id) {
-        $sql = "SELECT * FROM clientes WHERE id = ?";
-        $stmt = $this->pdo->prepare($sql);
+    public function update($data) {
+        $sql = "UPDATE personas SET codigo = ?, email = ?, nombre = ?, telefono = ?, carnet = ?, direccion = ?, credito = ?, empresa_id = ?, tipo_persona = ?
+                WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$data['codigo'], $data['email'], $data['nombre'], $data['telefono'], $data['carnet'], $data['direccion'], $data['credito'], $data['empresa_id'], $data['tipo_persona'], $data['id']]);
+    }
+
+    public function delete($id) {
+        $stmt = $this->conn->prepare("DELETE FROM personas WHERE id = ? AND tipo = 'cliente'");
+        $stmt->execute([$id]);
+    }
+
+    public function getById($id) {
+        $stmt = $this->conn->prepare("SELECT * FROM personas WHERE id = ? AND tipo = 'cliente'");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-
-    // Actualizar cliente
-    public function actualizarCliente($id, $codigo, $nombre, $email, $telefono) {
-        $sql = "UPDATE clientes SET codigo = ?, nombre = ?, email = ?, telefono = ? WHERE id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$codigo, $nombre, $email, $telefono, $id]);
-    }
-
-    // Eliminar cliente
-    public function eliminarCliente($id) {
-        $sql = "DELETE FROM clientes WHERE id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$id]);
-    }
 }
-?>

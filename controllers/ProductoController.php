@@ -1,55 +1,33 @@
+
 <?php
-include 'models/Producto.php';
+require_once '../models/Producto.php';
 
 class ProductoController {
-    private $productoModel;
-
-    public function __construct($pdo) {
-        $this->productoModel = new Producto($pdo);
+    public function create($data) {
+        $producto = new Producto();
+        $producto->create($data);
+        header("Location: ../views/frmProducto.php");
     }
 
-    // Mostrar todos los productos
-    public function mostrarProductos() {
-        if (isset($_GET['search'])) {
-            $searchTerm = $_GET['search'];
-            $productosBuscados = $this->productoModel->buscarProductos($searchTerm);
-            include 'views/frmProducto.php';
-        } else {
-            $productos = $this->productoModel->obtenerProductos();
-            include 'views/frmProducto.php';
-        }
+    public function read() {
+        $producto = new Producto();
+        return $producto->read();
     }
 
-    // Crear un nuevo producto
-    public function crearProducto() {
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $codigo = $_POST['codigo'];
-            $nombre = $_POST['nombre'];
-            $stock = $_POST['stock'];
-            $valor_unitario = $_POST['valor_unitario'];
-            $this->productoModel->crearProducto($codigo, $nombre, $stock, $valor_unitario);
-            header("Location: index.php?action=mostrarProductos");
-        }
+    public function update($data) {
+        $producto = new Producto();
+        $producto->update($data);
+        header("Location: ../views/frmProducto.php");
     }
 
-    // Editar producto
-    public function editarProducto($id) {
-        $producto = $this->productoModel->obtenerProducto($id);
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $codigo = $_POST['codigo'];
-            $nombre = $_POST['nombre'];
-            $stock = $_POST['stock'];
-            $valor_unitario = $_POST['valor_unitario'];
-            $this->productoModel->actualizarProducto($id, $codigo, $nombre, $stock, $valor_unitario);
-            header("Location: index.php?action=mostrarProductos");
-        }
-        include 'views/frmProducto.php';
+    public function delete($id) {
+        $producto = new Producto();
+        $producto->delete($id);
+        header("Location: ../views/frmProducto.php");
     }
 
-    // Eliminar producto
-    public function eliminarProducto($id) {
-        $this->productoModel->eliminarProducto($id);
-        header("Location: index.php?action=mostrarProductos");
+    public function getById($id) {
+        $producto = new Producto();
+        return $producto->getById($id);
     }
 }
-?>

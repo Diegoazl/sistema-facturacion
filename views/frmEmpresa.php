@@ -1,58 +1,63 @@
+
+<?php
+require_once '../controllers/EmpresaController.php';
+$controller = new EmpresaController();
+
+$empresaEdit = null;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!empty($_POST['id'])) {
+        $controller->update($_POST);
+    } else {
+        $controller->create($_POST);
+    }
+} elseif (isset($_GET['delete'])) {
+    $controller->delete($_GET['delete']);
+} elseif (isset($_GET['edit'])) {
+    $empresaEdit = $controller->getById($_GET['edit']);
+}
+
+$empresas = $controller->read();
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Empresas</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
 <div class="container">
-    <h2>Gestión de Empresas</h2>
+    <h2>Empresas</h2>
 
-    <!-- Formulario de búsqueda -->
-    <form method="GET" action="index.php">
-        <label for="search">Buscar Empresa:</label>
-        <input type="text" name="search" id="search" placeholder="Buscar por código o nombre">
-        <button type="submit" name="action" value="buscarEmpresas">Buscar</button>
+    <form method="POST">
+        <input type="hidden" name="id" value="<?= $empresaEdit['id'] ?? '' ?>">
+        <label>Código:</label>
+        <input type="text" name="codigo" value="<?= $empresaEdit['codigo'] ?? '' ?>" required>
+        <label>Nombre:</label>
+        <input type="text" name="nombre" value="<?= $empresaEdit['nombre'] ?? '' ?>" required>
+        <button class="btn" type="submit"><?= $empresaEdit ? 'Actualizar' : 'Guardar' ?></button>
     </form>
 
-    <!-- Formulario para crear o editar empresa -->
-    <h3><?= isset($empresa) ? 'Editar Empresa' : 'Agregar Nueva Empresa' ?></h3>
-    <form method="POST" action="index.php?action=<?= isset($empresa) ? 'editarEmpresa&id=' . $empresa['id'] : 'crearEmpresa' ?>">
-        <div class="form-group">
-            <label for="codigo">Código:</label>
-            <input type="text" name="codigo" class="form-control" value="<?= isset($empresa) ? $empresa['codigo'] : '' ?>" required>
-        </div>
-
-        <div class="form-group">
-            <label for="nombre">Nombre:</label>
-            <input type="text" name="nombre" class="form-control" value="<?= isset($empresa) ? $empresa['nombre'] : '' ?>" required>
-        </div>
-
-        <button type="submit"><?= isset($empresa) ? 'Actualizar Empresa' : 'Agregar Empresa' ?></button>
-    </form>
-
-    <hr>
-
-    <!-- Mostrar lista de empresas -->
-    <h3>Empresas Registradas</h3>
-    <table class="table">
+    <table>
         <thead>
-            <tr>
-                <th>Código</th>
-                <th>Nombre</th>
-                <th>Acciones</th>
-            </tr>
+            <tr><th>ID</th><th>Código</th><th>Nombre</th><th>Acciones</th></tr>
         </thead>
         <tbody>
-            <?php
-            // Mostrar empresas según la búsqueda (si hay un término de búsqueda)
-            $empresas = isset($empresasBuscadas) ? $empresasBuscadas : $empresas;
-            foreach ($empresas as $empresa):
-            ?>
+            <?php foreach ($empresas as $e): ?>
                 <tr>
-                    <td><?= $empresa['codigo'] ?></td>
-                    <td><?= $empresa['nombre'] ?></td>
+                    <td><?= $e['id'] ?></td>
+                    <td><?= $e['codigo'] ?></td>
+                    <td><?= $e['nombre'] ?></td>
                     <td>
-                        <a href="index.php?action=editarEmpresa&id=<?= $empresa['id'] ?>">Editar</a>
-                        <a href="index.php?action=eliminarEmpresa&id=<?= $empresa['id'] ?>" onclick="return confirm('¿Seguro que deseas eliminar esta empresa?')">Eliminar</a>
+                        <a class="btn" href="?edit=<?= $e['id'] ?>">Editar</a>
+                        <a class="btn" href="?delete=<?= $e['id'] ?>" onclick="return confirm('¿Eliminar?')">Eliminar</a>
                     </td>
                 </tr>
-            <?php endforeach; ?>
+            <?php endforeach ?>
         </tbody>
     </table>
-
-    <a href="index.php" class="btn btn-secondary">Regresar</a>
+    <br>
+    <a href="../index.php" class="btn">← Volver</a>
 </div>
+</body>
+</html>
