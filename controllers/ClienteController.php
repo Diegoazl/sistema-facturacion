@@ -10,8 +10,8 @@ class ClienteController {
 
     // Mostrar todos los clientes
     public function mostrarClientes() {
-        $clientes = $this->clienteModel->obtenerClientes();
-        include 'views/frmCliente.php';
+        $clientes = $this->clienteModel->obtenerClientes();  // Obtener todos los clientes
+        include 'views/frmCliente.php';  // Incluir la vista de clientes
     }
 
     // Crear un nuevo cliente
@@ -21,29 +21,29 @@ class ClienteController {
             $nombre = $_POST['nombre'];
             $email = $_POST['email'];
             $telefono = $_POST['telefono'];
-            $this->clienteModel->crearCliente($codigo, $nombre, $email, $telefono);
-            header("Location: index.php?action=mostrarClientes");
+            $this->clienteModel->crearCliente($codigo, $nombre, $email, $telefono);  // Crear cliente
+            header("Location: index.php?action=mostrarClientes");  // Redirigir a la lista
         }
     }
 
     // Editar cliente
     public function editarCliente($id) {
-        $cliente = $this->clienteModel->obtenerCliente($id);
+        $cliente = $this->clienteModel->obtenerCliente($id);  // Obtener cliente por ID
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $codigo = $_POST['codigo'];
             $nombre = $_POST['nombre'];
             $email = $_POST['email'];
             $telefono = $_POST['telefono'];
-            $this->clienteModel->actualizarCliente($id, $codigo, $nombre, $email, $telefono);
-            header("Location: index.php?action=mostrarClientes");
+            $this->clienteModel->actualizarCliente($id, $codigo, $nombre, $email, $telefono);  // Actualizar cliente
+            header("Location: index.php?action=mostrarClientes");  // Redirigir a la lista
         }
-        include 'views/frmCliente.php';
+        include 'views/frmCliente.php';  // Incluir vista de edición
     }
 
     // Eliminar cliente
     public function eliminarCliente($id) {
-        $this->clienteModel->eliminarCliente($id);
-        header("Location: index.php?action=mostrarClientes");
+        $this->clienteModel->eliminarCliente($id);  // Eliminar cliente
+        header("Location: index.php?action=mostrarClientes");  // Redirigir a la lista
     }
 }
 ?>
